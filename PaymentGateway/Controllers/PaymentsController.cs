@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PaymentGateway.Models;
 
 namespace PaymentGateway.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PaymentsController : ControllerBase
+    public partial class PaymentsController : ControllerBase
     {
         private readonly ILogger<PaymentsController> _logger;
 
@@ -18,37 +19,38 @@ namespace PaymentGateway.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<PaymentDetails> Get(Guid id)
+        [HttpPost]
+        public async Task<ProcessPaymentResponse> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
         {
-            if (id.ToString().First() == '1')
+            throw new NotImplementedException();
+
+            // todo bank identifier and also our identifier?
+            // are retries allowed?
+            // how do I deal with bank response which takes too much time?
+        }
+
+        [HttpGet]
+        public async Task<PaymentDetails> Get(string paymentIdentifier)
+        {
+            // todo 404 for payment not found
+            // id - query string or url?
+
+            // todo mention card number tokeniser?
+
+            if (paymentIdentifier.First() == '1')
             {
                 return new PaymentDetails
                 {
-                    Id = id,
-                    StatusCode = StatusCode.FailureReason1
+                    PaymentIdentifier = paymentIdentifier,
+                    StatusCode = PaymentStatusCode.FailureReason1
                 };
             }
             return new PaymentDetails
             {
-                Id = id,
+                PaymentIdentifier = paymentIdentifier,
                 MaskedCardNumber = "327237****43743",
-                StatusCode = StatusCode.Success
+                StatusCode = PaymentStatusCode.Success
             };
-        }
-        public class PaymentDetails
-        {
-            public Guid Id { get; set; }  
-            public string MaskedCardNumber { get; set; }
-            // todo card details
-            public StatusCode StatusCode { get; set; }
-        }
-
-        public enum StatusCode
-        {
-            Success = 0,
-            FailureReason1 = 1,
-            FailureReason2 = 2
         }
         }
 }
