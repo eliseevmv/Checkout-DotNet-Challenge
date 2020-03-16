@@ -3,10 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationInsightsResourceId>/subscriptions/bb495a88-4ce7-4700-b42b-fa4cfd5aedcf/resourcegroups/Default-ApplicationInsights-UkSouth/providers/microsoft.insights/components/PaymentGateway</ApplicationInsightsResourceId>
+    <UserSecretsId>99ccb617-d56d-4d84-bd9f-d6f8c2560c57</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.0.0" />
+    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.0.0-preview.5" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
