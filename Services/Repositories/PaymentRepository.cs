@@ -16,13 +16,18 @@ namespace PaymentGateway.Services.Repositories
             //        StatusCode = PaymentStatusCode.FailureReason1
             //    };
             //}
-            //return new Payment
-            //{
-            //    PaymentIdentifier = paymentIdentifier,
-            //    MaskedCardNumber = "327237****43743",
-            //    StatusCode = PaymentStatusCode.Success
-            //};
-            throw new NotImplementedException();
+            var payment = new Payment
+            (
+                Guid.NewGuid().ToString(),
+                PaymentStatusCode.Success,
+                123,
+                "GBP",
+                "4343*****3433",
+                "1220",
+                "234",
+                Guid.NewGuid()
+            );
+            return Task.FromResult(payment);
         }
 
         public Task Save(Payment payment)
