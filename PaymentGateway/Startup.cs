@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Azure;
+using PaymentGateway.Services.Repositories;
+using AutoMapper;
 
 namespace PaymentGateway
 {
@@ -26,6 +28,11 @@ namespace PaymentGateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // todo wrap in an extension method
+            services.AddTransient<IPaymentRepository, PaymentRepository>();
+
+            services.AddAutoMapper(typeof(Models.PaymentDetails)); //todo comment?
+
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
 
