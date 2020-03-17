@@ -18,7 +18,7 @@ namespace PaymentGateway.Services.ServiceClients
             _client = client;
             _configuration = configuration;
         }
-
+         
         public async Task<BankPaymentResponse> ProcessPayment(BankPaymentRequest request)
         {
             var url = _configuration["Dependencies:AcquiringBank:ProcessPaymentEndpointUrl"];
