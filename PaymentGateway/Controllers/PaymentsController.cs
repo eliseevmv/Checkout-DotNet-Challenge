@@ -10,6 +10,7 @@ using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Repositories;
 using PaymentGateway.Services.ServiceClients;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
+using PaymentGateway.Services.Services;
 using PaymentGateway.Services.Utils;
 
 namespace PaymentGateway.Controllers
@@ -21,14 +22,17 @@ namespace PaymentGateway.Controllers
         private readonly ILogger<PaymentsController> _logger;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
-        private readonly IBankClient _bankClient;
+        private readonly IAcquiringBankService _acquiringBankService;
 
-        public PaymentsController(ILogger<PaymentsController> logger, IPaymentRepository paymentRepository, IMapper mapper, IBankClient bankClient)
+        public PaymentsController(ILogger<PaymentsController> logger,
+                                  IPaymentRepository paymentRepository,
+                                  IMapper mapper,
+                                  IAcquiringBankService acquiringBankService)
         {
             _logger = logger;
             _paymentRepository = paymentRepository;
             _mapper = mapper;
-            _bankClient = bankClient;
+            _acquiringBankService = acquiringBankService;
         }
 
         // todo exception logging
@@ -37,23 +41,18 @@ namespace PaymentGateway.Controllers
         [HttpPost]                                                                  // todo Api.ProcessPaymentRequest?
         public async Task<ProcessPaymentResponse> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
         {
-            // todo validate required fields
-            // todo bank identifier and also our identifier?
-            var paymentDetails = _mapper.Map<Payment>(request);
-            paymentDetails.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentDetails.CardNumber);
+            // todo implement validation: required fields, card number should be 16 digits, supported currencies etc)
 
-            var bankRequest = _mapper.Map<BankPaymentRequest>(paymentDetails); //todo consider pushing mapping to bank client and use the entity. How to deal with the non masked card number?
-            var bankResponse = await _bankClient.ProcessPayment(bankRequest);
-            // how do I deal with bank response which takes too much time?
+            var paymentEntity = _mapper.Map<Payment>(request);
 
-            paymentDetails.PaymentIdentifier = bankResponse.PaymentIdentifier;
-            paymentDetails.StatusCode = bankResponse.PaymentStatusCode; 
+            await _acquiringBankService.ProcessPayment(paymentEntity);
 
-            await _paymentRepository.Save(paymentDetails);
+            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
+            await _paymentRepository.Save(paymentEntity);
             // what happens if I get response from bank but saving to DB fails eg because of not null constraints
             //  in particular, what do we return to the merchant
 
-            var response = _mapper.Map<ProcessPaymentResponse>(paymentDetails); // todo consider to get rid of it (but how to map enums? use same enum?)
+            var response = _mapper.Map<ProcessPaymentResponse>(paymentEntity); // todo consider to get rid of it (but how to map enums? use same enum?)
             
             return response;
         }
