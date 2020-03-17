@@ -9,7 +9,6 @@ namespace PaymentGateway.Services.ServiceClients
 {
     public class BankClient : IBankClient
     {
-        private const string BaseUrl = "https://localhost:44317/bankPayments/";  //todo configuration
         private readonly HttpClient _client;
         private readonly IConfiguration _configuration;
 
@@ -24,7 +23,7 @@ namespace PaymentGateway.Services.ServiceClients
             var url = _configuration["Dependencies:AcquiringBank:ProcessPaymentEndpointUrl"];
             // todo authentication
             var content = JsonConvert.SerializeObject(request);
-            var httpResponse = await _client.PostAsync(BaseUrl, new StringContent(content, System.Text.Encoding.Default, "application/json"));
+            var httpResponse = await _client.PostAsync(url, new StringContent(content, System.Text.Encoding.Default, "application/json"));
 
             if (!httpResponse.IsSuccessStatusCode)
             {

@@ -2,6 +2,7 @@
 
 namespace PaymentGateway.Services.Entities
 {
+    // todo consider creating child objects for payment request and bank response
     public class Payment
     {
         public string PaymentIdentifier { get; set; }

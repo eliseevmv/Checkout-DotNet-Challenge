@@ -5,10 +5,11 @@ namespace PaymentGateway.Models
     public class ProcessPaymentRequest
     {
         public decimal Amount { get; set; }
-        public string Currency { get; set; }  //todo GBP/EUR/USD? what are the currencies supported by the bank?
+        public string Currency { get; set; }  
 
-        public string CardNumber { get; set; }  // custom type?
-        public string ExpiryMonthAndDate { get; set; } // custom type?
+        public string CardNumber { get; set; } 
+
+        public string ExpiryMonthAndDate { get; set; } 
         public string Cvv { get; set; }
 
         public Guid MerchantId { get; set; }

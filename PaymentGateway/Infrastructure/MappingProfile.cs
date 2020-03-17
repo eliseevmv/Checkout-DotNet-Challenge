@@ -20,11 +20,9 @@ namespace PaymentGateway.Infrastructure
                 .ForMember(dest => dest.PaymentCardNumber, opt => opt.MapFrom(src => src.CardNumber))
                 .ForMember(dest => dest.PaymentExpiryMonthAndDate, opt => opt.MapFrom(src => src.ExpiryMonthAndDate))
                 .ForMember(dest => dest.PaymentCvv, opt => opt.MapFrom(src => src.Cvv));
-            // todo map properties
 
             CreateMap<Services.ServiceClients.AcquiringBankClient.Models.BankPaymentResponse, Services.Entities.Payment>();
-            //     .ForMember(dest => dest., opt => opt.MapFrom(src => src.PaymentIdentifier;
-            // todo map properties
+
             CreateMap<Services.Entities.Payment, Models.ProcessPaymentResponse>();
 
         }

@@ -19,12 +19,12 @@ namespace PaymentGateway.Services.Services
 
         public async Task ProcessPayment(Payment payment)
         {
-            var bankRequest = _mapper.Map<BankPaymentRequest>(payment); //todo consider pushing mapping to bank client and use the entity. How to deal with the non masked card number?
+            var bankRequest = _mapper.Map<BankPaymentRequest>(payment); 
         
             var bankResponse = await _bankClient.ProcessPayment(bankRequest);
             // how do I deal with bank response which takes too much time?
 
-            // todo consider creating a single method eg UpdateBankResponseDetails
+            // todo consider creating a single method eg UpdateBankResponseDetails or using child class
             payment.PaymentIdentifier = bankResponse.PaymentIdentifier;
             payment.StatusCode = bankResponse.PaymentStatusCode;
         }
