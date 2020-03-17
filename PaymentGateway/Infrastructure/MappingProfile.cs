@@ -18,8 +18,9 @@ namespace PaymentGateway.Infrastructure
             // todo map properties
 
             CreateMap<Services.ServiceClients.AcquiringBankClient.Models.BankPaymentResponse, Services.Entities.Payment>();
-           //     .ForMember(dest => dest., opt => opt.MapFrom(src => src.PaymentIdentifier;
+            //     .ForMember(dest => dest., opt => opt.MapFrom(src => src.PaymentIdentifier;
             // todo map properties
+            CreateMap<Services.Entities.Payment, Models.ProcessPaymentResponse>();
 
         }
     }

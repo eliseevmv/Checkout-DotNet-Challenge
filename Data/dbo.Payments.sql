@@ -6,9 +6,7 @@
 	[MaskedCardNumber] VARCHAR(16) NOT NULL,
 	[ExpiryMonthAndDate] VARCHAR(4) NOT NULL,
 	[Cvv] VARCHAR(3) NOT NULL,
-	[Created] DATETIME NOT NULL,
 	[MerchantId] UNIQUEIDENTIFIER NOT NULL
-
 )
 GO
 

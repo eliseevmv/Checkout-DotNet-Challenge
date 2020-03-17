@@ -9,6 +9,7 @@ namespace PaymentGateway.Services.Entities
         public decimal Amount { get; set; }
         public string Currency { get; set; }  //todo GBP/EUR/USD? what are the currencies supported by the bank?
 
+        public string CardNumber { get; set; }  // custom type? note - it is NOT persisted to DB
         public string MaskedCardNumber { get; set; }  // custom type?
         public string ExpiryMonthAndDate { get; set; } // custom type?
         public string Cvv { get; set; }

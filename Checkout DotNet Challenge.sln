@@ -7,8 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway", "PaymentGa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{DB23E7EE-991C-45AD-A612-CF766242CD11}"
 	ProjectSection(SolutionItems) = preProject
-		Data\Create Table Payments.sql.txt = Data\Create Table Payments.sql.txt
-		Data\dbo.Table.sql = Data\dbo.Table.sql
+		Data\dbo.Payments.sql = Data\dbo.Payments.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway.Services", "Services\PaymentGateway.Services.csproj", "{65C3DF9F-0F46-4784-84D3-DD346ED0EE3A}"

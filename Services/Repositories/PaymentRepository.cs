@@ -19,7 +19,7 @@ namespace PaymentGateway.Services.Repositories
 
         public async Task<Payment> Get(string paymentIdentifier)
         {
-            string connectionString = _configuration.GetConnectionString("DB"); // todo improve
+            var connectionString = _configuration.GetConnectionString("DB"); // todo improve
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 return await db.QuerySingleOrDefaultAsync<Payment>(
@@ -49,9 +49,16 @@ namespace PaymentGateway.Services.Repositories
             //return Task.FromResult(payment);
         }
 
-        public Task Save(Payment payment)
+        public async Task Save(Payment payment)
         {
-            throw new NotImplementedException();
+            var connectionString = _configuration.GetConnectionString("DB"); // todo improve
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                await db.ExecuteAsync(
+                    "INSERT INTO dbo.Payments (PaymentIdentifier,Amount,Currency,MaskedCardNumber,ExpiryMonthAndDate,Cvv,MerchantId) " +
+                    "VALUES(@PaymentIdentifier,@Amount,@Currency,@MaskedCardNumber,@ExpiryMonthAndDate,@Cvv,@MerchantId)", 
+                    payment);
+            }
         }
     }
 }

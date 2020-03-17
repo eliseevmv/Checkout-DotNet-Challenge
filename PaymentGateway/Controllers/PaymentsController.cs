@@ -10,6 +10,7 @@ using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Repositories;
 using PaymentGateway.Services.ServiceClients;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
+using PaymentGateway.Services.Utils;
 
 namespace PaymentGateway.Controllers
 {
@@ -39,6 +40,7 @@ namespace PaymentGateway.Controllers
             // todo validate required fields
             // todo bank identifier and also our identifier?
             var paymentDetails = _mapper.Map<Payment>(request);
+            paymentDetails.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentDetails.CardNumber);
 
             var bankRequest = _mapper.Map<BankPaymentRequest>(paymentDetails); //todo consider pushing mapping to bank client and use the entity. How to deal with the non masked card number?
             var bankResponse = await _bankClient.ProcessPayment(bankRequest);
