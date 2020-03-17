@@ -5,7 +5,7 @@ namespace PaymentGateway.Services.Entities
     public class Payment
     {
         public string PaymentIdentifier { get; set; }
-        public PaymentStatusCode StatusCode { get; set; }
+        public string StatusCode { get; set; } //todo consider using enum
         public decimal Amount { get; set; }
         public string Currency { get; set; }  //todo GBP/EUR/USD? what are the currencies supported by the bank?
 

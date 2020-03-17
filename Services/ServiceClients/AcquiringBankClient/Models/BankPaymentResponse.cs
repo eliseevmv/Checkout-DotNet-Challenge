@@ -11,6 +11,6 @@ namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models
         // In order to simulate this scenario, I have prefixed all fields in this request with "Payment" 
 
         public string PaymentIdentifier { get; set; }
-        public BankPaymentStatusCode PaymentStatusCode { get; set; }  
+        public string PaymentStatusCode { get; set; }  //todo consider using enum
     }
 }

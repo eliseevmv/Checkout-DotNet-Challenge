@@ -5,7 +5,7 @@ namespace PaymentGateway.Models
     public class PaymentDetails
     {
         public string PaymentIdentifier { get; set; }
-        public PaymentStatusCode StatusCode { get; set; }
+        public string StatusCode { get; set; } //todo consider using enum
 
         // todo consider putting payment details from the original request in a separate object
 

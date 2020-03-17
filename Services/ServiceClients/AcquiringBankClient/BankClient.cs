@@ -14,7 +14,7 @@ namespace PaymentGateway.Services.ServiceClients
             return new BankPaymentResponse()
             {
                 PaymentIdentifier = Guid.NewGuid().ToString(),
-                PaymentStatusCode = BankPaymentStatusCode.PaymentSuccess //todo different code depending on request
+                PaymentStatusCode = "Success" //todo different code depending on request
             };
         }
     }

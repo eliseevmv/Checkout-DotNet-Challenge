@@ -45,7 +45,7 @@ namespace PaymentGateway.Controllers
             // how do I deal with bank response which takes too much time?
 
             paymentDetails.PaymentIdentifier = bankResponse.PaymentIdentifier;
-            paymentDetails.StatusCode = Services.Entities.PaymentStatusCode.FailureReason1; // todo improve
+            paymentDetails.StatusCode = "FailureReason1"; // todo improve
 
             await _paymentRepository.Save(paymentDetails);
             // what happens if I get response from bank but saving to DB fails eg because of not null constraints
