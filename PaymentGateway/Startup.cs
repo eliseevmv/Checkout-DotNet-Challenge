@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Azure;
 using PaymentGateway.Services.Repositories;
 using AutoMapper;
+using PaymentGateway.Services.ServiceClients;
 
 namespace PaymentGateway
 {
@@ -30,8 +31,9 @@ namespace PaymentGateway
         {
             services.AddSingleton<IConfiguration>(Configuration);
 
-            // todo wrap in an extension method
+            // todo wrap in an extension method and consider AddScoped
             services.AddTransient<IPaymentRepository, PaymentRepository>();
+            services.AddTransient<IBankClient, BankClient>();
 
             services.AddAutoMapper(typeof(Models.PaymentDetails)); //todo comment?
 

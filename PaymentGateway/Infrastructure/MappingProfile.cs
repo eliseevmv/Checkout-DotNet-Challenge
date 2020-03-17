@@ -10,7 +10,17 @@ namespace PaymentGateway.Infrastructure
     {
         public MappingProfile()
         {
-            CreateMap<PaymentGateway.Services.Entities.Payment, PaymentGateway.Models.PaymentDetails>();
+            CreateMap<Services.Entities.Payment, Models.PaymentDetails>();
+
+            CreateMap<Models.ProcessPaymentRequest, Services.Entities.Payment>();
+
+            CreateMap<Services.Entities.Payment, Services.ServiceClients.AcquiringBankClient.Models.BankPaymentRequest>();
+            // todo map properties
+
+            CreateMap<Services.ServiceClients.AcquiringBankClient.Models.BankPaymentResponse, Services.Entities.Payment>();
+           //     .ForMember(dest => dest., opt => opt.MapFrom(src => src.PaymentIdentifier;
+            // todo map properties
+
         }
     }
 }
