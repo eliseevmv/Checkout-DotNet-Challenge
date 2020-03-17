@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Threading.Tasks;
+using NUnit.Framework;
 using PaymentGateway.IntegrationTests.ServiceClient.Models;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
-using System;
-using System.Threading.Tasks;
 
 namespace PaymentGateway.IntegrationTests
 {
@@ -15,8 +15,6 @@ namespace PaymentGateway.IntegrationTests
         {
             _client = new PaymentGatewayClient();
         }
-
-        
 
         [Test]
         public async Task Given_valid_request_when_process_payment_and_get_details_then_details_are_correct()
