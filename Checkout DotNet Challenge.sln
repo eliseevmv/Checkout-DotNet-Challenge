@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway.Services", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{74DBC524-B6CE-4270-A89E-68E79C17098F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankSimulator", "BankSimulator\BankSimulator.csproj", "{44FFB55B-A905-45CB-8604-C7F936A5C5BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{74DBC524-B6CE-4270-A89E-68E79C17098F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74DBC524-B6CE-4270-A89E-68E79C17098F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74DBC524-B6CE-4270-A89E-68E79C17098F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44FFB55B-A905-45CB-8604-C7F936A5C5BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44FFB55B-A905-45CB-8604-C7F936A5C5BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44FFB55B-A905-45CB-8604-C7F936A5C5BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44FFB55B-A905-45CB-8604-C7F936A5C5BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
