@@ -33,7 +33,7 @@ namespace PaymentGateway
 
             // todo wrap in an extension method and consider AddScoped
             services.AddTransient<IPaymentRepository, PaymentRepository>();
-            services.AddTransient<IBankClient, BankClient>();
+            services.AddHttpClient<IBankClient, BankClient>();
 
             services.AddAutoMapper(typeof(Models.PaymentDetails)); //todo comment?
 

@@ -1,21 +1,34 @@
-﻿using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
+﻿using Newtonsoft.Json;
+using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PaymentGateway.Services.ServiceClients
 {
     public class BankClient : IBankClient
     {
+        private const string BaseUrl = "https://localhost:44317/bankPayments/";  //todo configuration
+        private readonly HttpClient _client;
+
+        public BankClient(HttpClient client)
+        {
+            _client = client;
+        }
+
         public async Task<BankPaymentResponse> ProcessPayment(BankPaymentRequest request)
         {
-            // are retries allowed?
+            var content = JsonConvert.SerializeObject(request);
+            var httpResponse = await _client.PostAsync(BaseUrl, new StringContent(content, System.Text.Encoding.Default, "application/json"));
 
-            // todo real implementation
-            return new BankPaymentResponse()
+            if (!httpResponse.IsSuccessStatusCode)
             {
-                PaymentIdentifier = Guid.NewGuid().ToString(),
-                PaymentStatusCode = "Success" //todo different code depending on request
-            };
+                // todo are retries allowed?
+                throw new Exception("Cannot make a payment"); // todo return error message to the client? analyse response code?
+            }
+
+            var response = JsonConvert.DeserializeObject<BankPaymentResponse>(await httpResponse.Content.ReadAsStringAsync());
+            return response;
         }
     }
 }
