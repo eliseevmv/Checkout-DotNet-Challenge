@@ -1,4 +1,5 @@
 ﻿using PaymentGateway.Services.Entities;
+using System.Net;
 
 namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
 {
@@ -8,9 +9,9 @@ namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
 
         // This method maps from Http status code and the error code returned from the bank endpoint
         // to status codes used in PaymentGateway.
-        public PaymentStatusCode ConvertToStatusCode(bool isSuccessStatusCode, string paymentErrorCode)
+        public PaymentStatusCode ConvertToStatusCode(HttpStatusCode statusCode, string paymentErrorCode)
         {
-            if (isSuccessStatusCode)
+            if ((int)statusCode >= 200 && (int)statusCode < 300)
             {
                 return PaymentStatusCode.Success;
             }

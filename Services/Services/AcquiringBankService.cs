@@ -29,7 +29,7 @@ namespace PaymentGateway.Services.Services
 
             // todo consider creating a single method eg UpdateBankResponseDetails or using child class
             payment.PaymentIdentifier = bankResponse.ResponseBody.PaymentIdentifier;
-            payment.StatusCode = _statusCodeConverter.ConvertToStatusCode(bankResponse.IsSuccessStatusCode, bankResponse.ResponseBody.PaymentErrorCode);
+            payment.StatusCode = _statusCodeConverter.ConvertToStatusCode(bankResponse.StatusCode, bankResponse.ResponseBody.PaymentErrorCode);
         }
     }
 }

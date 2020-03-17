@@ -41,7 +41,7 @@ namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
             return new BankPaymentResponseWithStatus() 
             {
                 ResponseBody = response,
-                IsSuccessStatusCode = httpResponse.IsSuccessStatusCode
+                StatusCode = httpResponse.StatusCode
             };
         }
     }

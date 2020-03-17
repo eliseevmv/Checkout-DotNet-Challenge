@@ -1,9 +1,10 @@
 ﻿using PaymentGateway.Services.Entities;
+using System.Net;
 
 namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
 {
     public interface IStatusCodeConverter
     {
-        PaymentStatusCode ConvertToStatusCode(bool isSuccessStatusCode, string paymentErrorCode);
+        PaymentStatusCode ConvertToStatusCode(HttpStatusCode statusCode, string paymentErrorCode);
     }
 }
