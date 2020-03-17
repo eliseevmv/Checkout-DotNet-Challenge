@@ -41,7 +41,7 @@ namespace PaymentGateway.IntegrationTests
             {
                 Amount = 123,
                 Currency = "GBP",
-                CardNumber = "12345677812345678",
+                CardNumber = "1234567812345678",
                 ExpiryMonthAndDate = "1220",
                 Cvv = "425",
                 MerchantId = Guid.NewGuid()
