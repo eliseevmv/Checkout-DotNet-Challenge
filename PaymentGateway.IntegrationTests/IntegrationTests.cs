@@ -19,7 +19,7 @@ namespace PaymentGateway.IntegrationTests
         
 
         [Test]
-        public async Task HappyPath()
+        public async Task Given_valid_request_when_process_payment_and_get_details_then_details_are_correct()
         {
             var request = CreateValidPaymentRequest();
 
