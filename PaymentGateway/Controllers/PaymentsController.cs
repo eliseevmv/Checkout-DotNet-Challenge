@@ -54,7 +54,7 @@ namespace PaymentGateway.Controllers
 
             var response = _mapper.Map<ProcessPaymentResponse>(paymentEntity); // todo consider to get rid of it (but how to map enums? use same enum?)
 
-            if (response.StatusCode == PaymentStatusCode.Success)
+            if (paymentEntity.StatusCode == PaymentStatusCode.Success)
             {
                 return Ok(response);
             }
