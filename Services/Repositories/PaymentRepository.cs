@@ -55,8 +55,8 @@ namespace PaymentGateway.Services.Repositories
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 await db.ExecuteAsync(
-                    "INSERT INTO dbo.Payments (PaymentIdentifier,Amount,Currency,MaskedCardNumber,ExpiryMonthAndDate,Cvv,MerchantId) " +
-                    "VALUES(@PaymentIdentifier,@Amount,@Currency,@MaskedCardNumber,@ExpiryMonthAndDate,@Cvv,@MerchantId)", 
+                    "INSERT INTO dbo.Payments (PaymentIdentifier,StatusCode,Amount,Currency,MaskedCardNumber,ExpiryMonthAndDate,Cvv,MerchantId) " +
+                    "VALUES(@PaymentIdentifier,@StatusCode,@Amount,@Currency,@MaskedCardNumber,@ExpiryMonthAndDate,@Cvv,@MerchantId)", 
                     payment);
             }
         }
