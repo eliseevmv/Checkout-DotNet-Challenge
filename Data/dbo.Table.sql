@@ -10,3 +10,6 @@
 	[MerchantId] UNIQUEIDENTIFIER NOT NULL
 
 )
+GO
+
+-- CREATE CLUSTERED INDEX IX_Payments_PaymentIdentifier ON dbo.Payments(PaymentIdentifier)
