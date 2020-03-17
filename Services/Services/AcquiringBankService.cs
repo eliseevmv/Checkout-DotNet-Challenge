@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.ServiceClients;
+using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
 using System.Threading.Tasks;
 
@@ -10,11 +11,13 @@ namespace PaymentGateway.Services.Services
     {
         private readonly IMapper _mapper;
         private readonly IBankClient _bankClient;
+        private readonly IStatusCodeConverter _statusCodeConverter;
 
-        public AcquiringBankService(IMapper mapper, IBankClient bankClient)
+        public AcquiringBankService(IMapper mapper, IBankClient bankClient, IStatusCodeConverter statusCodeConverter)
         {
             _mapper = mapper;
             _bankClient = bankClient;
+            _statusCodeConverter = statusCodeConverter;
         }
 
         public async Task ProcessPayment(Payment payment)
@@ -25,8 +28,8 @@ namespace PaymentGateway.Services.Services
             // how do I deal with bank response which takes too much time?
 
             // todo consider creating a single method eg UpdateBankResponseDetails or using child class
-            payment.PaymentIdentifier = bankResponse.PaymentIdentifier;
-            payment.StatusCode = bankResponse.PaymentStatusCode;
+            payment.PaymentIdentifier = bankResponse.ResponseBody.PaymentIdentifier;
+            payment.StatusCode = _statusCodeConverter.ConvertToStatusCode(bankResponse.IsSuccessStatusCode, bankResponse.ResponseBody.PaymentErrorCode);
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
 using System.Threading.Tasks;
 
-namespace PaymentGateway.Services.ServiceClients
+namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
 {
     public interface IBankClient
     {
-        Task<BankPaymentResponse> ProcessPayment(BankPaymentRequest request);
+        Task<BankPaymentResponseWithStatus> ProcessPayment(BankPaymentRequest request);
     }
 }

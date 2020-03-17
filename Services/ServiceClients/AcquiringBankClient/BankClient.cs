@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace PaymentGateway.Services.ServiceClients
+namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
 {
     // ASSUMPTIONS
     // Acquiring bank exposes a RESTful HTTP API
@@ -23,7 +23,7 @@ namespace PaymentGateway.Services.ServiceClients
             _configuration = configuration;
         }
          
-        public async Task<BankPaymentResponse> ProcessPayment(BankPaymentRequest request)
+        public async Task<BankPaymentResponseWithStatus> ProcessPayment(BankPaymentRequest request)
         {
             var url = _configuration["Dependencies:AcquiringBank:ProcessPaymentEndpointUrl"];
             // todo authentication comment
@@ -37,7 +37,12 @@ namespace PaymentGateway.Services.ServiceClients
             // todo consider 500 and non-json response
         
             var response = JsonConvert.DeserializeObject<BankPaymentResponse>(await httpResponse.Content.ReadAsStringAsync());
-            return response;
+            
+            return new BankPaymentResponseWithStatus() 
+            {
+                ResponseBody = response,
+                IsSuccessStatusCode = httpResponse.IsSuccessStatusCode
+            };
         }
     }
 }

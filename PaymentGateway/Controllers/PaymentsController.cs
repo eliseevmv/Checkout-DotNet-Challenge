@@ -39,7 +39,7 @@ namespace PaymentGateway.Controllers
 
         // todo idempotency? request identifier?
         [HttpPost]                                                                  // todo Api.ProcessPaymentRequest?
-        public async Task<ProcessPaymentResponse> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
+        public async Task<ActionResult<ProcessPaymentResponse>> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
         {
             // todo implement validation: required fields, card number should be 16 digits, supported currencies etc)
 
@@ -53,8 +53,16 @@ namespace PaymentGateway.Controllers
             //  in particular, what do we return to the merchant
 
             var response = _mapper.Map<ProcessPaymentResponse>(paymentEntity); // todo consider to get rid of it (but how to map enums? use same enum?)
-            
-            return response;
+
+            if (response.StatusCode == PaymentStatusCode.Success)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                // this logic can be extended to support more http status codes
+                return BadRequest(response);
+            };
         }
 
         [HttpGet("{paymentIdentifier}")]

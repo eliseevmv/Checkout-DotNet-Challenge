@@ -15,6 +15,7 @@ using PaymentGateway.Services.Repositories;
 using AutoMapper;
 using PaymentGateway.Services.ServiceClients;
 using PaymentGateway.Services.Services;
+using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 
 namespace PaymentGateway
 {
@@ -34,6 +35,7 @@ namespace PaymentGateway
             // todo wrap in an extension method and consider AddScoped
             services.AddTransient<IPaymentRepository, PaymentRepository>();
             services.AddHttpClient<IBankClient, BankClient>();
+            services.AddTransient<IStatusCodeConverter, StatusCodeConverter>();
             services.AddTransient<IAcquiringBankService, AcquiringBankService>();
 
             services.AddAutoMapper(typeof(Models.PaymentDetails)); //todo comment?

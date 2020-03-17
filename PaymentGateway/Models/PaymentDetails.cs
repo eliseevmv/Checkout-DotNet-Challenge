@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PaymentGateway.Services.Entities;
+using System;
 
 namespace PaymentGateway.Models
 {
@@ -6,7 +7,7 @@ namespace PaymentGateway.Models
     {
         // todo consider putting bank response into a separate object
         public string PaymentIdentifier { get; set; }
-        public string StatusCode { get; set; }
+        public PaymentStatusCode StatusCode { get; set; } 
 
         // todo consider putting amount, currency and card information from the original request in a separate object
 
