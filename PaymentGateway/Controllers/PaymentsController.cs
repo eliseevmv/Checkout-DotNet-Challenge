@@ -40,7 +40,7 @@ namespace PaymentGateway.Controllers
             //  in particular, what do we return to the merchant
         }
 
-        [HttpGet]
+        [HttpGet("{paymentIdentifier}")]
 
       //  [Consumes(MediaTypeNames.Application.Json)]
         //[ProducesResponseType(StatusCodes.Status201Created)]
