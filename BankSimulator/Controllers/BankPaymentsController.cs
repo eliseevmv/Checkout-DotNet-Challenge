@@ -23,17 +23,33 @@ namespace BankSimulator.Controllers
         // Acquiring bank exposes a RESTful HTTP API
         // The payment processing endpoint
         //  - returns 200 and payment identifier for successful requests, 
-        //  - returns 4xx/5xx, payment identifier and error code for failed requests 
+        //  - returns 4xx, payment identifier and error code for requests failed validation
+        //  - returns 5xx, payment identifier and error code for requests failed because of server side issues
+        //  - returns 5xx and non-json error message to simulate serious issues
         [HttpPost]
         public async Task<ActionResult<BankPaymentResponse>> ProcessPayment(BankPaymentRequest request)
         {
-            if (request.PaymentCardNumber.Length != 16)
+            if (request.PaymentCardNumber.StartsWith("1111"))
             {
                 return BadRequest(new BankPaymentResponse()
                                 {
                                     PaymentIdentifier = Guid.NewGuid().ToString(),
-                                    PaymentErrorCode = "Failure_IncorrectCardNumber"
+                                    PaymentErrorCode = "ValidationErrorA"
                                 });
+            }
+
+            if (request.PaymentCardNumber.StartsWith("2222"))
+            {
+                return StatusCode(500, new BankPaymentResponse()
+                {
+                    PaymentIdentifier = Guid.NewGuid().ToString(),
+                    PaymentErrorCode = "InternalErrorA"
+                });
+            }
+
+            if (request.PaymentCardNumber.StartsWith("3333"))
+            {
+                throw new Exception("Non-json error message");
             }
 
             return new BankPaymentResponse()
