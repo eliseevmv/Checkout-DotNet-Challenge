@@ -22,7 +22,7 @@ namespace PaymentGateway.IntegrationTests
             var request = CreateValidPaymentRequest();
 
             var response = await _client.ProcessPayment(request);
-            var paymentDetails = await _client.Get(response.PaymentIdentifier);
+            var paymentDetails = await _client.Get(response.PaymentId);
 
             Assert.That(response.StatusCode, Is.EqualTo("Success"));
             Assert.That(paymentDetails.Amount, Is.EqualTo(request.Amount));

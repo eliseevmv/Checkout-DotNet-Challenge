@@ -31,9 +31,9 @@ namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
             return response;
         }
 
-        public async Task<PaymentDetails> Get(string paymentIdentifier)
+        public async Task<PaymentDetails> Get(string paymentId)
         {
-            var httpResponse = await _client.GetAsync($"{_baseUrl}/payments/{paymentIdentifier}");
+            var httpResponse = await _client.GetAsync($"{_baseUrl}/payments/{paymentId}");
 
             httpResponse.EnsureSuccessStatusCode();
 
