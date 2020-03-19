@@ -44,6 +44,7 @@ namespace PaymentGateway.Controllers
             // todo implement validation: required fields, card number should be 16 digits, supported currencies etc)
 
             var paymentEntity = _mapper.Map<Payment>(request);
+            paymentEntity.PaymentId = Guid.NewGuid();
 
             await _acquiringBankService.ProcessPayment(paymentEntity);
 

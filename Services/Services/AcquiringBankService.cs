@@ -28,7 +28,7 @@ namespace PaymentGateway.Services.Services
             // how do I deal with bank response which takes too much time?
 
             // todo consider creating a single method eg UpdateBankResponseDetails or using child class
-            payment.PaymentIdentifier = bankResponse.ResponseBody.PaymentIdentifier;
+            payment.AcquringBankPaymentId = bankResponse.ResponseBody.PaymentIdentifier;
             payment.StatusCode = _statusCodeConverter.ConvertToStatusCode(bankResponse.StatusCode, bankResponse.ResponseBody.PaymentErrorCode);
         }
     }

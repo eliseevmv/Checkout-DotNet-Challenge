@@ -21,8 +21,6 @@ namespace PaymentGateway.Infrastructure
                 .ForMember(dest => dest.PaymentExpiryMonthAndDate, opt => opt.MapFrom(src => src.ExpiryMonthAndDate))
                 .ForMember(dest => dest.PaymentCvv, opt => opt.MapFrom(src => src.Cvv));
 
-            CreateMap<Services.ServiceClients.AcquiringBankClient.Models.BankPaymentResponse, Services.Entities.Payment>();
-
             CreateMap<Services.Entities.Payment, Models.ProcessPaymentResponse>();
 
         }

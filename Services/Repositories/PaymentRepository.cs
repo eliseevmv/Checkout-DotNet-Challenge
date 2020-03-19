@@ -17,14 +17,14 @@ namespace PaymentGateway.Services.Repositories
             _configuration = configuration;
         }
 
-        public async Task<Payment> Get(string paymentIdentifier)
+        public async Task<Payment> Get(string paymentId)
         {
             var connectionString = _configuration.GetConnectionString("DB"); // todo improve
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 return await db.QuerySingleOrDefaultAsync<Payment>(
-                    "SELECT * FROM dbo.Payments WHERE PaymentIdentifier = @PaymentIdentifier", //todo select *
-                    new { paymentIdentifier });
+                    "SELECT * FROM dbo.Payments WHERE PaymentId = @PaymentId", //todo select *
+                    new { paymentId });
             }
         }
 
@@ -34,8 +34,8 @@ namespace PaymentGateway.Services.Repositories
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 await db.ExecuteAsync(
-                    "INSERT INTO dbo.Payments (PaymentIdentifier,StatusCode,Amount,Currency,MaskedCardNumber,ExpiryMonthAndDate,Cvv,MerchantId) " +
-                    "VALUES(@PaymentIdentifier,@StatusCode,@Amount,@Currency,@MaskedCardNumber,@ExpiryMonthAndDate,@Cvv,@MerchantId)", 
+                    "INSERT INTO dbo.Payments (PaymentId,AcquringBankPaymentId,StatusCode,Amount,Currency,MaskedCardNumber,ExpiryMonthAndDate,Cvv,MerchantId) " +
+                    "VALUES(@PaymentId,@AcquringBankPaymentId,@StatusCode,@Amount,@Currency,@MaskedCardNumber,@ExpiryMonthAndDate,@Cvv,@MerchantId)", 
                     payment);
             }
         }
