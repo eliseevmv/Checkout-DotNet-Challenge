@@ -45,11 +45,13 @@ namespace PaymentGateway.Controllers
 
             var paymentEntity = _mapper.Map<Payment>(request);
             paymentEntity.PaymentId = Guid.NewGuid();
+            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
+            paymentEntity.StatusCode = PaymentStatusCode.Processing;
+            await _paymentRepository.Save(paymentEntity);
 
             await _acquiringBankService.ProcessPayment(paymentEntity);
+            await _paymentRepository.Update(paymentEntity);
 
-            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
-            await _paymentRepository.Save(paymentEntity);
             // what happens if I get response from bank but saving to DB fails eg because of not null constraints
             //  in particular, what do we return to the merchant
 

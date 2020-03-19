@@ -2,7 +2,8 @@
 {
     public enum PaymentStatusCode
     {
-        Success = 0,
+        Processing = 0,
+        Success = 1,
         FailureCode1 = 1,
         FailureCode2 = 2
     }

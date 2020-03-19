@@ -9,5 +9,7 @@ namespace PaymentGateway.Services.Repositories
         Task<Payment> Get(string paymentIdentifier);
 
         Task Save(Payment payment);
+
+        Task Update(Payment payment);
     }
 }
