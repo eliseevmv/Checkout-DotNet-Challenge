@@ -173,3 +173,34 @@ Scenarios for the payment processing endpoint
 
         It is unclear what status code should Payment Gateway return to the merchant if Bank processed the payment but data store returned an error.
         I have decided to use 200 because the payment has actually been made.
+
+
+Scenarios for the retrieving payment details endpoint
+
+    1. Happy path
+
+        Merchant 
+            submits a request to the payment gateway
+        Payment gateway 
+            retrieves the payment details from its data store
+            returns 200 and the payment details to the merchant
+
+    2. Incorrect payment id
+
+        Merchant 
+            submits a request with incorrect payment id to the payment gateway
+        Payment gateway 
+            tries to retrieves the payment details from its data store but does not find it
+            returns 404 to the merchant
+
+    3. Database exception
+
+        Merchant 
+            submits a request to the payment gateway
+        Payment gateway 
+            tries to retrieves the payment details from its data store 
+            data store returns an exception
+            returns 500 to the merchant
+        
+        If the data store returns an exception, Payment Gateway should retry several times. 
+        It can help resolve errors related to intermittent connectivity issues and make this scenario less likely.
