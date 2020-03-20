@@ -11,14 +11,25 @@ namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
         // to status codes used in PaymentGateway.
         public PaymentStatusCode ConvertToStatusCode(HttpStatusCode statusCode, string paymentErrorCode)
         {
+            // Current implementation ignores the error code but production code should use it too
+
+            // This is a basic implementation, just to satisfy test scenarios
             if ((int)statusCode >= 200 && (int)statusCode < 300)
             {
                 return PaymentStatusCode.Success;
             }
 
-            // some logic which maps error codes (not implemented)
-           
-            return PaymentStatusCode.FailureCode1;
+            if ((int)statusCode >= 400 && (int)statusCode < 500)
+            {
+                return PaymentStatusCode.AcquiringBankFailureCode1;
+            }
+
+            if (((int)statusCode >= 500 && (int)statusCode < 600))
+            {
+                return PaymentStatusCode.AcquiringBankFailureCode2;
+            }
+
+            return PaymentStatusCode.AcquiringBankFailureCode2;
         }
     }
 }

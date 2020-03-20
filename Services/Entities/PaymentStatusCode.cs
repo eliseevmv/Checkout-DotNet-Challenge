@@ -4,7 +4,9 @@
     {
         Processing = 0,
         Success = 1,
-        FailureCode1 = 1,
-        FailureCode2 = 2
+        ValidationFailed = 2,
+        AcquiringBankFailureCode1 = 3,
+        AcquiringBankFailureCode2 = 4,
+        Unknown = 5,
     }
 }
