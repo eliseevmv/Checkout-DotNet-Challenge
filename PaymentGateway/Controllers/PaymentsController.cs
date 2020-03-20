@@ -20,20 +20,20 @@ namespace PaymentGateway.Controllers
     public partial class PaymentsController : ControllerBase
     {
         private readonly ILogger<PaymentsController> _logger;
-        private readonly IPaymentRepository _paymentRepository;
+        private readonly IPaymentValidationService _validationService;
+        private readonly IPaymentRepository _repository;
         private readonly IMapper _mapper;
         private readonly IAcquiringBankService _acquiringBankService;
 
-        public PaymentsController(ILogger<PaymentsController> logger,
-                                  IPaymentRepository paymentRepository,
-                                  IMapper mapper,
-                                  IAcquiringBankService acquiringBankService)
+        public PaymentsController(ILogger<PaymentsController> logger, IPaymentValidationService validationService, IPaymentRepository repository, IMapper mapper, IAcquiringBankService acquiringBankService)
         {
             _logger = logger;
-            _paymentRepository = paymentRepository;
+            _validationService = validationService;
+            _repository = repository;
             _mapper = mapper;
             _acquiringBankService = acquiringBankService;
         }
+
 
         // todo exception logging
 
@@ -44,13 +44,26 @@ namespace PaymentGateway.Controllers
             // todo implement validation: required fields, card number should be 16 digits, supported currencies etc)
 
             var paymentEntity = _mapper.Map<Payment>(request);
+   
             paymentEntity.PaymentId = Guid.NewGuid();
-            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
             paymentEntity.StatusCode = PaymentStatusCode.Processing;
-            await _paymentRepository.Save(paymentEntity);
+            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
+   
+            var validationErrors = _validationService.Validate(paymentEntity);
+
+            if (validationErrors.Any())
+            {
+                return UnprocessableEntity(new ProcessPaymentResponse()
+                    {
+                        PaymentId = paymentEntity.PaymentId.ToString(),
+                        StatusCode = PaymentStatusCode.ValidationFailed.ToString()
+                    });
+            }
+            
+            await _repository.Save(paymentEntity);
 
             await _acquiringBankService.ProcessPayment(paymentEntity);
-            await _paymentRepository.Update(paymentEntity);
+            await _repository.Update(paymentEntity);
 
             // what happens if I get response from bank but saving to DB fails eg because of not null constraints
             //  in particular, what do we return to the merchant
@@ -72,7 +85,7 @@ namespace PaymentGateway.Controllers
 
         public async Task<ActionResult<PaymentDetails>> Get(string paymentIdentifier)
         {
-            var payment = await _paymentRepository.Get(paymentIdentifier);
+            var payment = await _repository.Get(paymentIdentifier);
             if (payment == null)
             {
                 return NotFound();
