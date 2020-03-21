@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		readme.txt = readme.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway.UnitTests", "PaymentGateway.UnitTests\PaymentGateway.UnitTests.csproj", "{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,12 +47,17 @@ Global
 		{48874E27-C5BE-41E7-839F-D0AA51CFC08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48874E27-C5BE-41E7-839F-D0AA51CFC08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48874E27-C5BE-41E7-839F-D0AA51CFC08F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{48874E27-C5BE-41E7-839F-D0AA51CFC08F} = {C2C415D1-9EF1-4BE6-91DD-BF999ED6917A}
+		{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B} = {C2C415D1-9EF1-4BE6-91DD-BF999ED6917A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76E8A9C8-0FF0-49E0-A40D-54A0BE011167}
