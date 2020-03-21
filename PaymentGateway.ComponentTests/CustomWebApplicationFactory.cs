@@ -13,11 +13,7 @@ namespace PaymentGateway.ComponentTests
     {
         public CustomWebApplicationFactory()
         {
-            this.ClientOptions.AllowAutoRedirect = false;
-         //   this.ClientOptions.BaseAddress = new Uri("https://localhost");
         }
-
-//        public ApplicationOptions ApplicationOptions { get; private set; } // todo consider removing
 
         public Mock<IPaymentRepository> PaymentRepositoryMock { get; private set; }
 
@@ -28,17 +24,21 @@ namespace PaymentGateway.ComponentTests
             using (var serviceScope = this.Services.CreateScope())
             {
                 var serviceProvider = serviceScope.ServiceProvider;
-            //    this.ApplicationOptions = serviceProvider.GetRequiredService<IOptions<ApplicationOptions>>().Value;
                 this.PaymentRepositoryMock = serviceProvider.GetRequiredService<Mock<IPaymentRepository>>();
             }
 
             base.ConfigureClient(client);
         }
 
+        protected override IWebHostBuilder CreateWebHostBuilder()
+        {
+            return base.CreateWebHostBuilder();
+        }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder) =>
             builder
             //    .UseEnvironment("Test")
-                .UseStartup<TestStartup>();
+                .UseStartup<TEntryPoint>();
 
         protected override void Dispose(bool disposing)
         {

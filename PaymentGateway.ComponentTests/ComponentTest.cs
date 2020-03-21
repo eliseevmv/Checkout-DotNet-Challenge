@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PaymentGateway.ComponentTests
 {
-    public class ComponentTest : CustomWebApplicationFactory<Startup>
+    public class ComponentTest //: CustomWebApplicationFactory<TestStartup>
     {
         private readonly HttpClient client;
         private readonly Mock<IPaymentRepository> paymentRepositoryMock;
@@ -19,10 +19,30 @@ namespace PaymentGateway.ComponentTests
         {
             var builder = new WebHostBuilder().UseStartup<TestStartup>();
 
+
+            builder.ConfigureServices(services => {
+          
+
+            });
             var testServer = new TestServer(builder);
             this.client = testServer.CreateClient();
+            //; ; this.client = this.CreateClient();
 
-            this.paymentRepositoryMock = this.PaymentRepositoryMock;
+            var x = testServer.Services.GetService(typeof(Mock<IPaymentRepository>));
+            paymentRepositoryMock = (Mock<IPaymentRepository>)x;
+
+        }
+
+        [Test]
+        public async Task tmp()
+        {
+            paymentRepositoryMock.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync(new Services.Entities.Payment() { });
+
+            //this.paymentRepositoryMock.Setup(x => x.UtcNow).ReturnsAsync(new DateTimeOffset(2000, 1, 1));
+
+            var response = await client.GetAsync("/payments/UNKNOWN");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         [Test]

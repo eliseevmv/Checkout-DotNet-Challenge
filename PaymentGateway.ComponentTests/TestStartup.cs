@@ -24,13 +24,11 @@ namespace PaymentGateway.ComponentTests
         {
             services.AddMvc().AddApplicationPart(Assembly.Load(new AssemblyName("PaymentGateway")));
 
-            services
-                .AddSingleton(this._paymentRepository);  //todo remove?
+            services.AddSingleton(this._paymentRepository);  //todo remove?
 
             base.ConfigureServices(services);
 
-            services
-                .AddSingleton(this._paymentRepository.Object);
+            services.AddSingleton(this._paymentRepository.Object);
         }
     }
 }
