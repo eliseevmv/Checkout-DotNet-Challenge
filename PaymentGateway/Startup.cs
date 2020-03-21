@@ -1,19 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Azure;
 using PaymentGateway.Services.Repositories;
 using AutoMapper;
-using PaymentGateway.Services.ServiceClients;
 using PaymentGateway.Services.Services;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 
@@ -44,12 +36,6 @@ namespace PaymentGateway
 
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
-
-            //todo removr
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(Configuration["ConnectionStrings:Storage1"]);
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
