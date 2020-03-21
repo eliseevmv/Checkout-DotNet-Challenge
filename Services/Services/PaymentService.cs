@@ -3,9 +3,7 @@ using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Repositories;
 using PaymentGateway.Services.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PaymentGateway.Services.Services
@@ -46,10 +44,15 @@ namespace PaymentGateway.Services.Services
             await _repository.Save(paymentEntity);
 
             await _acquiringBankService.ProcessPayment(paymentEntity);
-            await _repository.Update(paymentEntity);
 
-            // what happens if I get response from bank but saving to DB fails eg because of not null constraints
-            //  in particular, what do we return to the merchant
+            try
+            {
+                await _repository.Update(paymentEntity);
+            }
+            catch (Exception)
+            {
+                // See comments for Scenario 7 in readme.txt
+            }
         }
 
         public async Task<Payment> Get(string paymentIdentifier)

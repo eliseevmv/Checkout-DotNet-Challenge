@@ -10,6 +10,7 @@ using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Repositories;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -73,11 +74,35 @@ namespace PaymentGateway.ComponentTests
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
-
             var response = await client.Post<ProcessPaymentRequest>("/payments", request);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
+
+        [Test]
+        public async Task Given_valid_request_when_ProcessPayment_and_repository_throws_exception_after_calling_bank_then_returns_ok()
+        {
+            paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Payment>())).Returns(Task.CompletedTask);
+            paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Payment>())).Throws(new Exception());
+            bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
+            {
+                StatusCode = HttpStatusCode.OK,
+                ResponseBody = new BankPaymentResponse
+                {
+                    PaymentIdentifier = "someIdentifier",
+                    PaymentErrorCode = null
+                }
+            }); ;
+
+            var request = PaymentRequestBuilder.BuildValidPaymentRequest();
+
+
+            var response = await client.Post<ProcessPaymentRequest>("/payments", request);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        // ... More tests for ProcessPayment
 
 
         [Test]
@@ -90,18 +115,7 @@ namespace PaymentGateway.ComponentTests
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
-        //[Test]
-        //public async Task GetFoo_Default_Returns200OK()
-        //{
-
-
-        //    //this.paymentRepositoryMock.Setup(x => x.UtcNow).ReturnsAsync(new DateTimeOffset(2000, 1, 1));
-
-        //    var response = await client.Get<string>("/weatherforecast");
-
-        //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        //}
-
+        // ... More tests for Get
 
         private static Mock<T> GetMock<T>(TestServer testServer) where T : class
         {

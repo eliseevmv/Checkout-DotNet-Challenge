@@ -41,7 +41,9 @@ namespace PaymentGateway.ComponentTests
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>(); 
+            // If a controllers throws an exception, the middleware ensures that tests receive 
+            // not an exception but a proper HTTP response with code 500
 
             base.Configure(app, env);
         }

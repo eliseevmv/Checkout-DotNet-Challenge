@@ -83,7 +83,7 @@ Scenarios for the payment processing endpoint
             saves the response in its data store
             returns 200 to the merchant
 
-        This scenario is implemented as an integration test.
+        This scenario is implemented as a component test and an integration test.
 
     2. Validation failure in Payment Gateway
 
@@ -152,7 +152,7 @@ Scenarios for the payment processing endpoint
     5. Bank timeout
 
         Same as scenario above but bank does not respond
-        This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+        This scenario is  implemented as part of this exercise, but a production system should be ready for this scenario.
 
     6. Database exception before calling bank
 
@@ -163,7 +163,7 @@ Scenarios for the payment processing endpoint
             data store returns exception
             returns 500 to the merchant
 
-        This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+        This scenario is implemented as a component test.
 
     7. Database exception after calling bank
 
@@ -182,10 +182,18 @@ Scenarios for the payment processing endpoint
             data store returns an exception
             returns 200 to the merchant
 
-        It is unclear what status code should Payment Gateway return to the merchant if Bank processed the payment but data store returned an error.
-        I have decided to use 200 because the payment has actually been made.
+        This scenario is implemented as a component test
 
-        This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+        It is unclear what status code should Payment Gateway return to the merchant if the Bank processed the payment but data store returned an error.
+        It depends on whether it is safe to re-send payment request to Bank endpoint.
+        I have made an assumption that Bank endpoint is not idempotent and it is not safe to re-send payment request to Bank.
+        In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
+        does not retry the same payment.
+        As a result of that, merchant will have correct response code but Payment Gateway data store will have incorrect status (because update failed)
+        Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue.
+        It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
+
+
         
 Scenarios for the retrieving payment details endpoint
 
