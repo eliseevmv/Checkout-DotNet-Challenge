@@ -20,19 +20,22 @@ namespace PaymentGateway.Controllers
     public partial class PaymentsController : ControllerBase
     {
         private readonly ILogger<PaymentsController> _logger;
-        private readonly IPaymentValidationService _validationService;
         private readonly IPaymentRepository _repository;
         private readonly IMapper _mapper;
-        private readonly IAcquiringBankService _acquiringBankService;
+        private readonly IPaymentProcessingService _paymentProcessingService;
 
-        public PaymentsController(ILogger<PaymentsController> logger, IPaymentValidationService validationService, IPaymentRepository repository, IMapper mapper, IAcquiringBankService acquiringBankService)
+        public PaymentsController(
+            ILogger<PaymentsController> logger,
+            IPaymentRepository repository,
+            IMapper mapper,
+            IPaymentProcessingService paymentProcessingService)
         {
             _logger = logger;
-            _validationService = validationService;
             _repository = repository;
             _mapper = mapper;
-            _acquiringBankService = acquiringBankService;
+            _paymentProcessingService = paymentProcessingService;
         }
+
 
 
         // todo exception logging
@@ -41,43 +44,20 @@ namespace PaymentGateway.Controllers
         [HttpPost]                                                                  // todo Api.ProcessPaymentRequest?
         public async Task<ActionResult<ProcessPaymentResponse>> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
         {
-            // todo implement validation: required fields, card number should be 16 digits, supported currencies etc)
-
             var paymentEntity = _mapper.Map<Payment>(request);
-   
-            paymentEntity.PaymentId = Guid.NewGuid();
-            paymentEntity.StatusCode = PaymentStatusCode.Processing;
-            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
-   
-            var validationErrors = _validationService.Validate(paymentEntity);
 
-            if (validationErrors.Any())
+            await _paymentProcessingService.ProcessPayment(paymentEntity);
+
+            var response = _mapper.Map<ProcessPaymentResponse>(paymentEntity); 
+
+            switch (paymentEntity.StatusCode)
             {
-                return UnprocessableEntity(new ProcessPaymentResponse()
-                    {
-                        PaymentId = paymentEntity.PaymentId.ToString(),
-                        StatusCode = PaymentStatusCode.ValidationFailed.ToString()
-                    });
-            }
-            
-            await _repository.Save(paymentEntity);
-
-            await _acquiringBankService.ProcessPayment(paymentEntity);
-            await _repository.Update(paymentEntity);
-
-            // what happens if I get response from bank but saving to DB fails eg because of not null constraints
-            //  in particular, what do we return to the merchant
-
-            var response = _mapper.Map<ProcessPaymentResponse>(paymentEntity); // todo consider to get rid of it (but how to map enums? use same enum?)
-
-            if (paymentEntity.StatusCode == PaymentStatusCode.Success)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                // this logic can be extended to support more http status codes
-                return BadRequest(response);
+                case PaymentStatusCode.Success:
+                    return Ok(response);
+                case PaymentStatusCode.ValidationFailed:
+                    return UnprocessableEntity(response);
+                default:
+                    return BadRequest(response);
             };
         }
 
