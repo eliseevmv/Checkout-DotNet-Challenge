@@ -20,7 +20,7 @@ namespace PaymentGateway
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IConfiguration>(Configuration);
 
@@ -38,7 +38,7 @@ namespace PaymentGateway
             services.AddApplicationInsightsTelemetry();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
