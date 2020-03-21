@@ -1,7 +1,5 @@
 ﻿using PaymentGateway.Services.Entities;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PaymentGateway.Services.Services
 {
@@ -14,9 +12,9 @@ namespace PaymentGateway.Services.Services
                 yield return "Payment amount is negative or zero";
             }
 
-            // todo Validate currency. It should be in the list of supported currencies. 
+            // Validate currency. It should be in the list of supported currencies. 
 
-            // todo Validate card number, Expiry month and date and CVV
+            // Validate card number (might depend on card type and involve checksum calculation) , Expiry month/date and CVV
         }
     }
 }

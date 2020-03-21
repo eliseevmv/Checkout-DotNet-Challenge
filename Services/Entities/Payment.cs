@@ -2,24 +2,21 @@
 
 namespace PaymentGateway.Services.Entities
 {
-    // todo consider creating child objects for payment request and bank response
     public class Payment
     {
         public Guid PaymentId { get; set; }
         public string AcquringBankPaymentId { get; set; }
-        public PaymentStatusCode StatusCode { get; set; } //todo consider using enum
+        public PaymentStatusCode StatusCode { get; set; } 
         public decimal Amount { get; set; }
-        public string Currency { get; set; }  //todo GBP/EUR/USD? what are the currencies supported by the bank?
+        public string Currency { get; set; }  // It might be an enum or currencyId
 
-        public string CardNumber { get; set; }  // custom type? note - it is NOT persisted to DB
-        public string MaskedCardNumber { get; set; }  // custom type?
-        public string ExpiryMonthAndDate { get; set; } // custom type?
+        public string CardNumber { get; set; }  // It is NOT persisted to DB
+        public string MaskedCardNumber { get; set; }  
+        public string ExpiryMonthAndDate { get; set; } 
         public string Cvv { get; set; }
 
         public Guid MerchantId { get; set; }
 
-        // todo consider making it immutable
-
-        
+        // Ideally this class should have private setters. All property changes should be done via methods.
     }
 }
