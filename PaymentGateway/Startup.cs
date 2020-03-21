@@ -8,6 +8,7 @@ using PaymentGateway.Services.Repositories;
 using AutoMapper;
 using PaymentGateway.Services.Services;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
+using PaymentGateway.Infrastructure;
 
 namespace PaymentGateway
 {
@@ -43,6 +44,10 @@ namespace PaymentGateway
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                //Implement error page for productionW
             }
 
             app.UseHttpsRedirection();
