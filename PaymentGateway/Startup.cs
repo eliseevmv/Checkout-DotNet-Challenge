@@ -38,7 +38,7 @@ namespace PaymentGateway
             services.AddTransient<IStatusCodeConverter, StatusCodeConverter>();
             services.AddTransient<IAcquiringBankService, AcquiringBankService>();
             services.AddTransient<IPaymentValidationService, PaymentValidationService>();
-            services.AddTransient<IPaymentProcessingService, PaymentProcessingService>();
+            services.AddTransient<IPaymentService, PaymentService>();
 
             services.AddAutoMapper(typeof(Models.PaymentDetails)); //todo comment?
 

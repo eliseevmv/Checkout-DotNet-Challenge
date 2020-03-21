@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PaymentGateway.Models;
 using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Repositories;
-using PaymentGateway.Services.ServiceClients;
-using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
 using PaymentGateway.Services.Services;
-using PaymentGateway.Services.Utils;
 
 namespace PaymentGateway.Controllers
 {
@@ -22,21 +16,19 @@ namespace PaymentGateway.Controllers
         private readonly ILogger<PaymentsController> _logger;
         private readonly IPaymentRepository _repository;
         private readonly IMapper _mapper;
-        private readonly IPaymentProcessingService _paymentProcessingService;
+        private readonly IPaymentService _paymentService;
 
         public PaymentsController(
             ILogger<PaymentsController> logger,
             IPaymentRepository repository,
             IMapper mapper,
-            IPaymentProcessingService paymentProcessingService)
+            IPaymentService paymentService)
         {
             _logger = logger;
             _repository = repository;
             _mapper = mapper;
-            _paymentProcessingService = paymentProcessingService;
+            _paymentService = paymentService;
         }
-
-
 
         // todo exception logging
 
@@ -46,7 +38,7 @@ namespace PaymentGateway.Controllers
         {
             var paymentEntity = _mapper.Map<Payment>(request);
 
-            await _paymentProcessingService.ProcessPayment(paymentEntity);
+            await _paymentService.ProcessPayment(paymentEntity);
 
             var response = _mapper.Map<ProcessPaymentResponse>(paymentEntity); 
 

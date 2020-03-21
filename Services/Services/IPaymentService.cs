@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PaymentGateway.Services.Services
 {
-    public interface IPaymentProcessingService
+    public interface IPaymentService
     {
         Task ProcessPayment(Payment paymentEntity);
     }

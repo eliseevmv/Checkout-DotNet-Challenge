@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace PaymentGateway.Services.Services
 {
-    public class PaymentProcessingService : IPaymentProcessingService
+    public class PaymentService : IPaymentService
     {
-        private readonly ILogger<PaymentProcessingService> _logger;
+        private readonly ILogger<PaymentService> _logger;
         private readonly IPaymentValidationService _validationService;
         private readonly IPaymentRepository _repository;
         private readonly IAcquiringBankService _acquiringBankService;
 
-        public PaymentProcessingService(ILogger<PaymentProcessingService> logger,
+        public PaymentService(ILogger<PaymentService> logger,
                                         IPaymentValidationService validationService,
                                         IPaymentRepository repository,
                                         IAcquiringBankService acquiringBankService)
