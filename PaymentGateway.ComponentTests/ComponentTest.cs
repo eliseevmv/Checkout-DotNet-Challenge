@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Moq;
 using NUnit.Framework;
 using PaymentGateway.Services.Repositories;
@@ -15,18 +17,24 @@ namespace PaymentGateway.ComponentTests
 
         public ComponentTest()
         {
-            this.client = this.CreateClient();
+            var builder = new WebHostBuilder().UseStartup<Startup>();
+
+            var testServer = new TestServer(builder);
+            this.client = testServer.CreateClient();
+
             this.paymentRepositoryMock = this.PaymentRepositoryMock;
         }
 
         [Test]
         public async Task GetFoo_Default_Returns200OK()
         {
+
+
             //this.paymentRepositoryMock.Setup(x => x.UtcNow).ReturnsAsync(new DateTimeOffset(2000, 1, 1));
 
-            var response = await this.client.GetAsync("/weatherforecast");
+            var response = await client.GetAsync("/weatherforecast");
 
-            Assert.That(response, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
     }
 }

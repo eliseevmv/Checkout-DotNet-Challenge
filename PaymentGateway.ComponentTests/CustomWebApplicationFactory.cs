@@ -14,7 +14,7 @@ namespace PaymentGateway.ComponentTests
         public CustomWebApplicationFactory()
         {
             this.ClientOptions.AllowAutoRedirect = false;
-         //   this.ClientOptions.BaseAddress = new Uri("https://localhost:5001");
+         //   this.ClientOptions.BaseAddress = new Uri("https://localhost");
         }
 
 //        public ApplicationOptions ApplicationOptions { get; private set; } // todo consider removing
