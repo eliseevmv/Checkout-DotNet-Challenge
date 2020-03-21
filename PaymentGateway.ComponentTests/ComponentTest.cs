@@ -17,7 +17,7 @@ namespace PaymentGateway.ComponentTests
 
         public ComponentTest()
         {
-            var builder = new WebHostBuilder().UseStartup<Startup>();
+            var builder = new WebHostBuilder().UseStartup<TestStartup>();
 
             var testServer = new TestServer(builder);
             this.client = testServer.CreateClient();

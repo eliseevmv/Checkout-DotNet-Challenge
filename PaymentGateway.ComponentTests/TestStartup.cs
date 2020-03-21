@@ -5,6 +5,7 @@ using Moq;
 using PaymentGateway.Services.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace PaymentGateway.ComponentTests
@@ -21,6 +22,8 @@ namespace PaymentGateway.ComponentTests
 
         public override void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().AddApplicationPart(Assembly.Load(new AssemblyName("PaymentGateway")));
+
             services
                 .AddSingleton(this._paymentRepository);  //todo remove?
 
