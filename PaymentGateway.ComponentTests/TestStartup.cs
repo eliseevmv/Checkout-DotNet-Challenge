@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Moq;
+using PaymentGateway.ComponentTests.Infrastructure;
 using PaymentGateway.Services.Repositories;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 using System;
@@ -34,6 +37,13 @@ namespace PaymentGateway.ComponentTests
 
             services.AddSingleton(this._paymentRepository.Object);
             services.AddSingleton(this._bankClient.Object);
+        }
+
+        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            base.Configure(app, env);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using PaymentGateway.ComponentTests.Builders;
 using PaymentGateway.ComponentTests.Infrastructure;
@@ -52,7 +53,30 @@ namespace PaymentGateway.ComponentTests
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(response.ResponseBody.StatusCode, Is.EqualTo(PaymentStatusCode.Success.ToString()));
-            Assert.That(response.ResponseBody.PaymentId, Is.Not.Null.And.Not.Empty));
+            Assert.That(response.ResponseBody.PaymentId, Is.Not.Null.And.Not.Empty);
+        }
+
+        [Test]
+        public async Task Given_valid_request_when_ProcessPayment_and_repository_throws_exception_before_calling_bank_then_returns_500()
+        {
+            paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Payment>())).Throws(new System.Exception());
+            paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Payment>())).Returns(Task.CompletedTask);
+            bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
+            {
+                StatusCode = HttpStatusCode.OK,
+                ResponseBody = new BankPaymentResponse
+                {
+                    PaymentIdentifier = "someIdentifier",
+                    PaymentErrorCode = null
+                }
+            }); ;
+
+            var request = PaymentRequestBuilder.BuildValidPaymentRequest();
+
+
+            var response = await client.Post<ProcessPaymentRequest>("/payments", request);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
 
 
