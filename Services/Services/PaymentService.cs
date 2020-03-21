@@ -51,5 +51,10 @@ namespace PaymentGateway.Services.Services
             // what happens if I get response from bank but saving to DB fails eg because of not null constraints
             //  in particular, what do we return to the merchant
         }
+
+        public async Task<Payment> Get(string paymentIdentifier)
+        {
+            return await _repository.Get(paymentIdentifier);
+        }
     }
 }
