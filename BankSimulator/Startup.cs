@@ -24,6 +24,7 @@ namespace BankSimulator
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
             services.AddControllers();
         }
 
@@ -35,6 +36,8 @@ namespace BankSimulator
             }
 
             app.UseHttpsRedirection();
+
+            app.UseHealthChecks("/health");
 
             app.UseRouting();
 
