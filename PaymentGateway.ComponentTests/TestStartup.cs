@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Moq;
+using PaymentGateway.API;
 using PaymentGateway.ComponentTests.Infrastructure;
 using PaymentGateway.Services.Repositories;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace PaymentGateway.ComponentTests
 {

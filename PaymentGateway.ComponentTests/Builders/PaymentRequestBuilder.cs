@@ -1,5 +1,5 @@
-﻿using PaymentGateway.ComponentTests.Infrastructure;
-using PaymentGateway.Models;
+﻿using PaymentGateway.API.Models;
+using PaymentGateway.ComponentTests.Infrastructure;
 using System;
 
 namespace PaymentGateway.ComponentTests.Builders

@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Azure;
 using PaymentGateway.Services.Repositories;
 using AutoMapper;
 using PaymentGateway.Services.Services;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
-using PaymentGateway.Infrastructure;
 
 namespace PaymentGateway.API
 {

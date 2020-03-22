@@ -2,7 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PaymentGateway.Models;
+using PaymentGateway.API.Models;
 using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Services;
 
