@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PaymentGateway.Services.Repositories;
 using AutoMapper;
-using PaymentGateway.Services.Services;
-using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
+using PaymentGateway.API.Infrastructure;
 
 namespace PaymentGateway.API
 {
@@ -23,20 +21,16 @@ namespace PaymentGateway.API
         {
             services.AddSingleton<IConfiguration>(Configuration);
 
-            // todo wrap in an extension method and consider AddScoped
-            services.AddTransient<IPaymentRepository, PaymentRepository>();
-            services.AddHttpClient<IBankClient, BankClient>();
-            services.AddTransient<IStatusCodeConverter, StatusCodeConverter>();
-            services.AddTransient<IAcquiringBankService, AcquiringBankService>();
-            services.AddTransient<IPaymentValidationService, PaymentValidationService>();
-            services.AddTransient<IPaymentService, PaymentService>();
+            services.ConfigureDependencies();
 
-            services.AddAutoMapper(typeof(Models.Payment)); //todo comment?
+            services.AddAutoMapper(typeof(Models.Payment)); 
 
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
             services.AddHealthChecks();
         }
+
+       
 
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
