@@ -1,34 +1,23 @@
-Assumptions
-
-Acquiring bank exposes an REST API which 
-    - uses JSON format
-    - returns 200 and payment identifier for successful requests, 
-    - returns 4xx, payment identifier and error code for requests which failed validation
-    - returns 5xx, payment identifier and error code when payment is not possible because of technical issues (eg one of dependencies is down)
-    - returns 5xx and non-JSON response when it experiences serious issues (eg whole system is down and proxy returned 503/504) 
-
-If the acquiring bank endpoint used a different technology (eg a SOAP web service), Payment Gateway should be able to support that.
-
-Payment Gateway design considerations
+1. Payment Gateway design considerations
     
-    1. Architecture and tech stack
+    1.1. Architecture and tech stack
     
     I'd like to implement Payment Gateway as REST API and to use JSON format. I'd also like to implement it 
     using .NET Core and to host it on Azure. I assume it is acceptable.
     
-    2. Endpoints
+    1.2. Endpoints
 
     According to requirements, Payment Gateway 
             -   should provide merchants a way to process a payment 
             -   should also allow a merchant to retrieve details of previously made payment using its identifier. 
       
-      A standard way to implement these requirements in REST API is to treat each payment as a separate resource with a unique URL. 
-      The URL should include resource type (payment) and its identifier. Example:  {paymentGatewayBaseUrl}/payments/{paymentIdentifier}
-      When API receives GET request to resource's URL, it will return resource representation in JSON format. 
-      Clients can create new payment resources by sending POST requests to {paymentGatewayBaseUrl}/payments.
-      Payment details are passed in POST request body.
+    A standard way to implement these requirements in REST API is to treat each payment as a separate resource with a unique URL. 
+    The URL should include resource type (payment) and its identifier. Example:  {paymentGatewayBaseUrl}/payments/{paymentIdentifier}
+    When API receives GET request to resource's URL, it will return the resource representation in JSON format. 
+    Clients can create new payment resources by sending POST requests to {paymentGatewayBaseUrl}/payments.
+    Payment details are passed in POST request body.
 
-    3. Data store
+    1.3. Data store
 
     In order to meet requirements to allow a merchant to retrieve payment details, Payment Gateway needs to store payment details 
     in a persistent data store. Data store should support saving payment details and retrieving payment details by identifier.
@@ -37,7 +26,7 @@ Payment Gateway design considerations
     Relational database is also a good choice. I have decided to use a relational database (SQL Server) because I have more 
     experience with SQL Server than with NoSQL databases.
 
-    4. Status codes
+    1.4. Status codes
     
     According to the requirements, a merchant should be able to process a payment and receive either a successful or unsuccessful response. 
     Details of a previously made payment should include a status code which indicates the result of the payment.
@@ -45,18 +34,32 @@ Payment Gateway design considerations
     REST APIs return HTTP status code to indicate if an operation was successful. For example, Payment Gateway will use 200 to show that an operation
     was successful, 422 to indicate that validation has failed and 500 for an internal server error.
     
-    Unfortunately, it is possible that not all payment failure scenario has a corresponding HTTP status code.
+    Unfortunately, it is possible that not every payment failure scenario has a corresponding HTTP status code.
     In case a payment has failed, Payment Gateway will assign its own status code and return it to the merchant in the response body.
     It will also store the status code in the data store together with payment details. 
 
-    in case the payment failure has happened in the Acquiring Bank and it returns an error code, the Payment Gateway will 
-    assign its own status code on the basis of the Acquiring Bank status code.
+    in case the payment failure has happened in the Acquiring Bank and it returns its own error code, it is a good idea to add this
+    information to payment details. However, the Payment Gateway will not store bank's error code directly. Instead, its own 
+    list of status codes should have values which correspond to bank error codes. Payment Gateway will map bank's error code to these 
+    status codes. This is done to protect Payment Gateway and its clients from unexpected code changes in Acquiring Bank.
 
-    5. Encryption
-    According to the requirements, the response should include a masked card number and card details.
-    PCI-DSS should also be taken into consideration.
+    1.6. Encryption
 
-    6. Payment identifier
+    Data at rest 
+
+    According to the requirements, the response should include a masked card number and card details. 
+    Current version of Payment Gateway stores the masked card number and does not store the complete card number.
+    This is not production-ready. PCI-DSS should be taken into consideration.
+    In particular, card details should be encrypted according to the appropriate security standards.
+    As an alternatiive it could be possible to use a secure 3rd party service to store the credit card details.
+
+    Data in transit
+
+    Current versions of Payment Gateway enforces HTTPS (by using app.UseHttpsRedirection command) in order ensure that card details 
+    are not transmitted between Merchant and Payment Gateway unencrypted. It should also use HTTPS when calling Acquiring Bank.
+
+    1.7. Payment identifier
+
     Payment identifier generated by the Acquiring Bank is not always available. It is possible that the Acquring Bank system throws an exception
     and returns an error message, which does not contain payment identifier. 
     Payment Gateway should generate its own payment identifier, return it to the merchant and use this identifier in GET payment endpoint URL.
@@ -65,9 +68,9 @@ Payment Gateway design considerations
     Identifier returned by the bank can be stored as an optional property of payment resource. It can be useful for incident investigation purposes. 
     
 
-Scenarios for the payment processing endpoint
+2. Scenarios for the payment processing endpoint
 
-    1. Happy path
+    2.1. Happy path
 
         Merchant 
             submits a request to the payment gateway
@@ -83,9 +86,9 @@ Scenarios for the payment processing endpoint
             saves the response in its data store
             returns 200 to the merchant
 
-        This scenario is implemented as a component test and an integration test.
+    This scenario is implemented as a component test and an integration test.
 
-    2. Validation failure in Payment Gateway
+    2.2. Validation failure in Payment Gateway
 
         Merchant 
             submits a request to the payment gateway
@@ -93,10 +96,10 @@ Scenarios for the payment processing endpoint
             validates the request, validation fails 
             returns 4xx to the merchant
 
-        I have made an assumption that invalid requests should not be stored in data store.
-        This scenario is implemented as an integration test.
+    I have made an assumption that invalid requests should not be stored in data store.
+    This scenario is implemented as an integration test.
 
-    3. Validation failure in Bank
+    2.3. Validation failure in Bank
 
         Merchant 
             submits a request to the payment gateway
@@ -112,9 +115,9 @@ Scenarios for the payment processing endpoint
             saves the response in its data store
             returns 4xx to the merchant
 
-        This scenario is implemented as an integration test.
+    This scenario is implemented as an integration test.
 
-    4. Server error in Bank
+    2.4. Server error in Bank
 
         Merchant 
             submits a request to the payment gateway
@@ -130,9 +133,9 @@ Scenarios for the payment processing endpoint
             saves the response in its data store
             returns 5xx to the merchant
 
-        This scenario is implemented as an integration test.
+    This scenario is implemented as an integration test.
 
-    5. Server error in Bank, non-JSON response
+    2.5. Server error in Bank, non-JSON response
 
         Merchant 
             submits a request to the payment gateway
@@ -146,15 +149,15 @@ Scenarios for the payment processing endpoint
             saves error details (empty payment identifier and error code) in its data store
             returns 5xx to the merchant
 
-        This scenario shows that payment identifier generated by the bank is not always available.
-        This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+    This scenario shows that payment identifier generated by the bank is not always available.
+    This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
-    5. Bank timeout
+    2.6. Bank timeout
 
-        Same as scenario above but bank does not respond
-        This scenario is  implemented as part of this exercise, but a production system should be ready for this scenario.
+    Same as scenario above but bank does not respond
+    This scenario is  implemented as part of this exercise, but a production system should be ready for this scenario.
 
-    6. Database exception before calling bank
+    2.7. Database exception before calling bank
 
         Merchant 
             submits a request to the payment gateway
@@ -163,9 +166,9 @@ Scenarios for the payment processing endpoint
             data store returns exception
             returns 500 to the merchant
 
-        This scenario is implemented as a component test.
+    This scenario is implemented as a component test.
 
-    7. Database exception after calling bank
+    2.8. Database exception after calling bank
 
         Merchant 
             submits a request to the payment gateway
@@ -182,22 +185,22 @@ Scenarios for the payment processing endpoint
             data store returns an exception
             returns 200 to the merchant
 
-        This scenario is implemented as a component test
+    This scenario is implemented as a component test
 
-        It is unclear what status code should Payment Gateway return to the merchant if the Bank processed the payment but data store returned an error.
-        It depends on whether it is safe to re-send payment request to Bank endpoint.
-        I have made an assumption that Bank endpoint is not idempotent and it is not safe to re-send payment request to Bank.
-        In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
-        does not retry the same payment.
-        As a result of that, merchant will have correct response code but Payment Gateway data store will have incorrect status (because update failed)
-        Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue.
-        It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
+    It is unclear what status code should Payment Gateway return to the merchant if the Bank processed the payment but data store returned an error.
+    It depends on whether it is safe to re-send payment request to Bank endpoint.
+    I have made an assumption that Bank endpoint is not idempotent and it is not safe to re-send payment request to Bank.
+    In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
+    does not retry the same payment.
+    As a result of that, merchant will have correct response code but Payment Gateway data store will have incorrect status (because update failed)
+    Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue.
+    It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
 
 
         
-Scenarios for the retrieving payment details endpoint
+3. Scenarios for the retrieving payment details endpoint
 
-    1. Happy path
+    3.1. Happy path
 
         Merchant 
             submits a request to the payment gateway
@@ -205,9 +208,9 @@ Scenarios for the retrieving payment details endpoint
             retrieves the payment details from its data store
             returns 200 and the payment details to the merchant
 
-        This scenario is implemented as an integration test.
+    This scenario is implemented as an integration test.
 
-    2. Incorrect payment id
+    3.2. Incorrect payment id
 
         Merchant 
             submits a request with incorrect payment id to the payment gateway
@@ -215,9 +218,9 @@ Scenarios for the retrieving payment details endpoint
             tries to retrieves the payment details from its data store but does not find it
             returns 404 to the merchant
 
-        This scenario is implemented as an integration test.
+    This scenario is implemented as an integration test.
 
-    3. Database exception
+    3.3. Database exception
 
         Merchant 
             submits a request to the payment gateway
@@ -226,7 +229,22 @@ Scenarios for the retrieving payment details endpoint
             data store returns an exception
             returns 500 to the merchant
         
-        If the data store returns an exception, Payment Gateway should retry several times. 
-        It can help resolve errors related to intermittent connectivity issues and make this scenario less likely.
+    If the data store returns an exception, Payment Gateway should retry several times. 
+    It can help resolve errors related to intermittent connectivity issues and make this scenario less likely.
 
-        This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+    This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+
+
+4. Bank Simulator
+
+    4.1 Assumptions
+
+    Acquiring bank exposes an REST API which 
+        - uses JSON format
+        - returns 200 and payment identifier for successful requests, 
+        - returns 4xx, payment identifier and error code for requests which failed validation
+        - returns 5xx, payment identifier and error code when payment is not possible because of technical issues (eg one of dependencies is down)
+        - returns 5xx and non-JSON response when it experiences serious issues (eg whole system is down and proxy returned 503/504) 
+
+    If the acquiring bank endpoint used a different technology (eg a SOAP web service), Payment Gateway would be able to support that 
+    but code changes would be required.
