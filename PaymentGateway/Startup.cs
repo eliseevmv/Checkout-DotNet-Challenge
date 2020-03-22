@@ -37,6 +37,7 @@ namespace PaymentGateway
 
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
+            services.AddHealthChecks();
         }
 
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -51,6 +52,8 @@ namespace PaymentGateway
             }
 
             app.UseHttpsRedirection();
+
+            app.UseHealthChecks("/health");
 
             app.UseRouting();
 
