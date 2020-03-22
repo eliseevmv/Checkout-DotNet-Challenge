@@ -50,9 +50,12 @@
 
     According to the requirements, the response should include a masked card number and card details. 
     Current version of Payment Gateway stores the masked card number and does not store the complete card number.
+
     This is not production-ready. PCI-DSS should be taken into consideration.
     In particular, card details should be encrypted according to the appropriate security standards.
     As an alternatiive it could be possible to use a secure 3rd party service to store the credit card details.
+    
+    It is important to prevent writing credit card details to log files, including logs of requests and responses.
 
     Data in transit
 
@@ -240,10 +243,25 @@
 
     This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
+4. Testing
 
-4. Bank Simulator
+    Ideally Payment Gateway should have a set of tests which follows the idea of the test pyramid.
+    
+    Most classes should have a separate set of unit tests which test each class in isolation of any dependencies.
+    Dependencies must be replaced by test doubles, eg mocks. Unit tests should do detailed low-level testing of classes.
 
-    4.1 Assumptions
+    Payment Gateway should also have a set of component tests, which run PaymentGateway inside an in-memory test web server and 
+    replace external dependencies (eg database and Bank) by mocks. These tests allow to tests Payment Gateway as a whole.
+    They allow to simulate correct and incorrect responses from external systems and test how Payment Gateway processes these
+    responses. There should be fewer component tests that unit tests.
+    
+    Payment Gateway should have a set of integration tests, which run against Payment Gateway deployed on a test environment,
+    with real dependencies, including real database and Bank Simulator. Ideally number of these tests should be lower that number
+    of component tests, because these tests are slower and could be more brittle.
+
+5. Bank Simulator
+
+    5.1 Assumptions
 
     Acquiring bank exposes an REST API which 
         - uses JSON format
@@ -254,3 +272,12 @@
 
     If the acquiring bank endpoint used a different technology (eg a SOAP web service), Payment Gateway would be able to support that 
     but code changes would be required.
+
+
+6. Improvements
+    
+    - Configuration for multiple environments, including production
+    - Logging could be improved
+    - API default page
+    - Swagger documentation
+
