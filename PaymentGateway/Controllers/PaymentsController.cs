@@ -27,7 +27,15 @@ namespace PaymentGateway.Controllers
         // todo exception logging
 
         // todo idempotency? request identifier?
-        [HttpPost]                                                                  // todo Api.ProcessPaymentRequest?
+        // todo Api.ProcessPaymentRequest?
+
+        // This endpoint returns either successful or unsuccessful response by HTTP status code.
+        // However since Get endpoint returns payment details which include payment status,
+        // for consistency this endpoint returns payment status too.
+        // It also returns paymentId which can be used to get details of previously made payment from the Get endpoint.
+
+
+        [HttpPost]                                                                  
         public async Task<ActionResult<ProcessPaymentResponse>> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
         {
             var paymentEntity = _mapper.Map<Payment>(request);
