@@ -1,7 +1,7 @@
 ﻿using PaymentGateway.Services.Entities;
 using System;
 
-namespace PaymentGateway.Models
+namespace PaymentGateway.API.Models
 {
     public class PaymentDetails
     {

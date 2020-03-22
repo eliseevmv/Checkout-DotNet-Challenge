@@ -6,7 +6,7 @@ using PaymentGateway.Models;
 using PaymentGateway.Services.Entities;
 using PaymentGateway.Services.Services;
 
-namespace PaymentGateway.Controllers
+namespace PaymentGateway.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

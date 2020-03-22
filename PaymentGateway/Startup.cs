@@ -10,7 +10,7 @@ using PaymentGateway.Services.Services;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 using PaymentGateway.Infrastructure;
 
-namespace PaymentGateway
+namespace PaymentGateway.API
 {
     public class Startup
     {

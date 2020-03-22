@@ -1,7 +1,7 @@
 ﻿using PaymentGateway.Services.Entities;
 using System.Net;
 
-namespace PaymentGateway.Models
+namespace PaymentGateway.API.Models
 {
     public class ProcessPaymentResponse
     {

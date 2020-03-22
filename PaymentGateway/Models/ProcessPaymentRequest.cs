@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PaymentGateway.Models
+namespace PaymentGateway.API.Models
 {
     public class ProcessPaymentRequest
     {
