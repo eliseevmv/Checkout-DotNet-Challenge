@@ -25,6 +25,7 @@
     a good choice for these requirements, especially in case there is no other requirements for data joining and querying. 
     Relational database is also a good choice. I have decided to use a relational database (SQL Server) because I have more 
     experience with SQL Server than with NoSQL databases.
+    I have decided to use Dapper to access SQL server database because of simplicity and high performance.
 
     1.4. Status codes
     
@@ -66,7 +67,12 @@
     Since payment identifier is exposed to external systems, it is practical to use GUID data type. 
     
     Identifier returned by the bank can be stored as an optional property of payment resource. It can be useful for incident investigation purposes. 
-    
+  
+    1.8. Entities and services
+
+    Business logic is contained in the core of the system, which consist of services and entities. 
+    API, data access code and Acquiring Bank client should not contain business logic. They are interface adapters between the core and 
+    the external systems. They convert data from the format convenient to external systems to the entities.
 
 2. Scenarios for the payment processing endpoint
 
