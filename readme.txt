@@ -280,4 +280,6 @@
     - Logging could be improved
     - API default page
     - Swagger documentation
+    - I would like to separate core (entities and services) from infrastructure (data access and service clients). 
+      Core project should not have reference to infrastructure projects. This is similar to Hexagonal Arctitecture approach.
 
