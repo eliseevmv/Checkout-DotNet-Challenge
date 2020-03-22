@@ -19,11 +19,11 @@ namespace PaymentGateway.Services.Repositories
 
         public async Task<Payment> Get(string paymentId)
         {
-            var connectionString = _configuration.GetConnectionString("DB"); // todo improve
+            var connectionString = _configuration.GetConnectionString("DB"); 
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 return await db.QuerySingleOrDefaultAsync<Payment>(
-                    "SELECT * FROM dbo.Payments WHERE PaymentId = @PaymentId", //todo select *
+                    "SELECT PaymentId,AcquringBankPaymentId,StatusCode,Amount,Currency,MaskedCardNumber,ExpiryMonthAndDate,Cvv,MerchantId FROM dbo.Payments WHERE PaymentId = @PaymentId", 
                     new { paymentId });
             }
         }
