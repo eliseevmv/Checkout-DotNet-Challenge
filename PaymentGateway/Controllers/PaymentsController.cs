@@ -36,9 +36,9 @@ namespace PaymentGateway.API.Controllers
 
 
         [HttpPost]                                                                  
-        public async Task<ActionResult<ProcessPaymentResponse>> ProcessPayment(ProcessPaymentRequest request) // todo Can it be done more RESTFUL?
+        public async Task<ActionResult<ProcessPaymentResponse>> ProcessPayment(ProcessPaymentRequest request)
         {
-            var paymentEntity = _mapper.Map<Payment>(request);
+            var paymentEntity = _mapper.Map<Services.Entities.Payment>(request);
 
             await _paymentService.ProcessPayment(paymentEntity);
 
@@ -56,7 +56,7 @@ namespace PaymentGateway.API.Controllers
         }
 
         [HttpGet("{paymentIdentifier}")]
-        public async Task<ActionResult<PaymentDetails>> Get(string paymentIdentifier)
+        public async Task<ActionResult<API.Models.Payment>> Get(string paymentIdentifier)
         {
             var payment = await _paymentService.Get(paymentIdentifier);
             if (payment == null)
@@ -64,7 +64,7 @@ namespace PaymentGateway.API.Controllers
                 return NotFound();
             }
 
-            var paymentResponse = _mapper.Map<PaymentDetails>(payment);
+            var paymentResponse = _mapper.Map<API.Models.Payment>(payment);
             return paymentResponse;
         }
     }

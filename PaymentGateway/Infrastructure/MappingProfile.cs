@@ -10,9 +10,9 @@ namespace PaymentGateway.API.Infrastructure
     {
         public MappingProfile()
         {
-            CreateMap<Services.Entities.Payment, Models.PaymentDetails>();
+            CreateMap<Services.Entities.Payment, API.Models.Payment>();
 
-            CreateMap<Models.ProcessPaymentRequest, Services.Entities.Payment>();
+            CreateMap<API.Models.ProcessPaymentRequest, Services.Entities.Payment>();
 
             CreateMap<Services.Entities.Payment, Services.ServiceClients.AcquiringBankClient.Models.BankPaymentRequest>()
                 .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Amount))
@@ -21,7 +21,7 @@ namespace PaymentGateway.API.Infrastructure
                 .ForMember(dest => dest.PaymentExpiryMonthAndDate, opt => opt.MapFrom(src => src.ExpiryMonthAndDate))
                 .ForMember(dest => dest.PaymentCvv, opt => opt.MapFrom(src => src.Cvv));
 
-            CreateMap<Services.Entities.Payment, Models.ProcessPaymentResponse>();
+            CreateMap<Services.Entities.Payment, API.Models.ProcessPaymentResponse>();
 
         }
     }

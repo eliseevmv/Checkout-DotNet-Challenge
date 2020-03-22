@@ -31,7 +31,7 @@ namespace PaymentGateway.API
             services.AddTransient<IPaymentValidationService, PaymentValidationService>();
             services.AddTransient<IPaymentService, PaymentService>();
 
-            services.AddAutoMapper(typeof(Models.PaymentDetails)); //todo comment?
+            services.AddAutoMapper(typeof(Models.Payment)); //todo comment?
 
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
