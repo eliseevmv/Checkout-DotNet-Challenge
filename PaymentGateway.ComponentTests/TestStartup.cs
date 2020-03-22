@@ -25,7 +25,7 @@ namespace PaymentGateway.ComponentTests
 
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddApplicationPart(Assembly.Load(new AssemblyName("PaymentGateway")));
+            services.AddMvc().AddApplicationPart(Assembly.Load(new AssemblyName("PaymentGateway.API")));
 
             services.AddSingleton(this._paymentRepository);  
             services.AddSingleton(this._bankClient);  
