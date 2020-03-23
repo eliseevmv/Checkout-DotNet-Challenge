@@ -30,8 +30,6 @@ namespace PaymentGateway.API
             services.AddHealthChecks();
         }
 
-       
-
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -40,7 +38,7 @@ namespace PaymentGateway.API
             }
             else
             {
-                //Implement error page for productionW
+                //Implement error page for production
             }
 
             app.UseHttpsRedirection();

@@ -23,17 +23,10 @@ namespace PaymentGateway.API.Controllers
             _paymentService = paymentService;
         }
 
-        // todo mention card number tokeniser?
-        // todo exception logging
-
-        // todo idempotency? request identifier?
-        // todo Api.ProcessPaymentRequest?
-
         // This endpoint returns either successful or unsuccessful response by HTTP status code.
         // However since Get endpoint returns payment details which include payment status,
         // for consistency this endpoint returns payment status too.
         // It also returns paymentId which can be used to get details of previously made payment from the Get endpoint.
-
 
         [HttpPost]                                                                  
         public async Task<ActionResult<ProcessPaymentResponse>> ProcessPayment(ProcessPaymentRequest request)
