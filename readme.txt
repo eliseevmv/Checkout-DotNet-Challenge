@@ -323,12 +323,8 @@
 
     Payment Gateway uses a SQL database deployed on Azure. The database has one table. SQL script to create the table is in /Data/dbo.Payments.sql
 
-7. Improvements
+7. Other improvements
     
-    7.1. Improvements to make this application more production-ready
-
-    These improvements include 
-
     - Configuration for multiple environments, including production
     - Improve the way how code reads configuration - including implementing options pattern
     - Logging could be improved
