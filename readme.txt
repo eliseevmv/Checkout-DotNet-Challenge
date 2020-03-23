@@ -311,7 +311,9 @@
 
     Performance testing
 
-    I have done a very basic performance test - ran Postman Collection against Payment Gateway deployed to Azure, in a loop.
+    I did a very basic performance test - ran a process payment request from Postman against Payment Gateway deployed to Azure, in a loop (1000 times)
+    According to Application Insights, average execution time was 31ms, 99th percentile was 65ms.
+    See Documentation/Application Insights-1000 requests.PNG
     
 
 7. Improvements

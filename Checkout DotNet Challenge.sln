@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C2C415D1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{4F573290-6CCA-4391-B6DA-95993AB18BA0}"
 	ProjectSection(SolutionItems) = preProject
+		Documentation\Application Insights-1000 requests.PNG = Documentation\Application Insights-1000 requests.PNG
 		readme.txt = readme.txt
 	EndProjectSection
 EndProject
