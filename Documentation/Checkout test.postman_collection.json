@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "505356b8-3d01-4060-849b-a21a8d6978c0",
+		"name": "Checkout test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Payment - Azure",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://checkoutpaymentgatewayapi.azurewebsites.net/payments/6944494a-7bf9-4861-99a6-15b96f8d1063b096-725076971098",
+					"protocol": "https",
+					"host": [
+						"checkoutpaymentgatewayapi",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"payments",
+						"6944494a-7bf9-4861-99a6-15b96f8d1063b096-725076971098"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Process Payment - Azure",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Amount\":123,\n\t\"Currency\": \"GBP\",\n\t\"CardNumber\": \"1234567812345678\",\n\t\"ExpiryMonthAndDate\": \"1120\",\n\t\"Cvv\": \"425\",\n\t\"MerchantId\":\"81a63f58-b004-403d-8e9b-12867210bd85\"\n}"
+				},
+				"url": {
+					"raw": "https://checkoutpaymentgatewayapi.azurewebsites.net/payments",
+					"protocol": "https",
+					"host": [
+						"checkoutpaymentgatewayapi",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bank Simulator - Process Payment - Azure",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"PaymentAmount\":123,\n\t\"PaymentCurrency\": \"GBP\",\n\t\"PaymentCardNumber\": \"1234567812345678000000\",\n\t\"PaymentExpiryMonthAndDate\": \"1120\",\n\t\"PaymentCvv\": \"425\"\n}"
+				},
+				"url": {
+					"raw": "https://checkoutbanksimulatorapp.azurewebsites.net/bankpayments",
+					"protocol": "https",
+					"host": [
+						"checkoutbanksimulatorapp",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"bankpayments"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
