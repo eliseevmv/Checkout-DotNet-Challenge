@@ -19,25 +19,5 @@ namespace PaymentGateway.ComponentTests.Builders
             };
         }
 
-        public static ProcessPaymentRequest BuildPaymentRequestToFailPaymentGatewayValidation()
-        { 
-            var request = BuildValidPaymentRequest();
-            request.Amount = 0;
-            return request;
-        }
-
-        public static ProcessPaymentRequest BuildPaymentRequestToFailBankValidation()
-        {
-            var request = BuildValidPaymentRequest();
-            request.Amount = BankSimulatorConstants.PaymentAmountForValidationError;
-            return request;
-        }
-
-        public static ProcessPaymentRequest BuildPaymentRequestToSimulateErrorMessageFromBank()
-        {
-            var request = BuildValidPaymentRequest();
-            request.Amount = BankSimulatorConstants.PaymentAmountToSimulateErrorMessageFromBank;
-            return request;
-        }
     }
 }

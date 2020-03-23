@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 
