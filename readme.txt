@@ -277,6 +277,7 @@
 6. Improvements
     
     - Configuration for multiple environments, including production
+    - Improve the way how code reads configuration - including implementing options pattern
     - Logging could be improved
     - API default page
     - Swagger documentation
