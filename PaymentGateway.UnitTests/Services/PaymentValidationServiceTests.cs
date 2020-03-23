@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using PaymentGateway.Services.Services;
+using PaymentGateway.UnitTests.Common;
 using System;
 using Payment = PaymentGateway.Services.Entities.Payment;
 
@@ -20,7 +21,7 @@ namespace PaymentGateway.UnitTests
         [Test]
         public void Given_valid_payment_when_validates_should_return_empty_collection()
         {
-            var paymentEntity = CreateValidPayment();
+            var paymentEntity = PaymentEntityBuilder.CreateValidPayment();
             
             var result = paymentValidationService.Validate(paymentEntity);
             
@@ -30,19 +31,6 @@ namespace PaymentGateway.UnitTests
 
         // All other validation scenarios
 
-        private static Payment CreateValidPayment()
-        {
-            return new Payment()
-            {
-                PaymentId = Guid.NewGuid(),
-                Amount = 123,
-                CardNumber = "1234123412341234",
-                Currency = "GBP",
-                ExpiryMonthAndDate = "0421",
-                Cvv = "526",
-                MerchantId = Guid.NewGuid(),
-                StatusCode = Services.Entities.PaymentStatusCode.Processing
-            };
-        }
+       
     }
 }
