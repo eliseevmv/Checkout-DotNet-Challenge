@@ -7,7 +7,7 @@ namespace PaymentGateway.Services.Utils
     {
         public static string MaskCardNumber(string cardNumber)
         {
-            // todo what if card number is too short?
+            // Very basic implementation, should be improved
             var sb = new StringBuilder(cardNumber);
             sb[6] = '*';
             sb[7] = '*';

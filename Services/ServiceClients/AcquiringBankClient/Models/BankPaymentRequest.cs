@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models
+﻿namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models
 {
     public class BankPaymentRequest
     {

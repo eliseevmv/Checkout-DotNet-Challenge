@@ -25,9 +25,10 @@ namespace PaymentGateway.Services.Services
             var bankRequest = _mapper.Map<BankPaymentRequest>(payment); 
         
             var bankResponse = await _bankClient.ProcessPayment(bankRequest);
-            // how do I deal with bank response which takes too much time?
+            // We should consider dealing with scenario when with bank response takes too much time
+            // If retries are allowed and are safe, and bank returns 5xx, this class should retry a payment several times
+            // In high-load scenarios we should consider using circuit breaker 
 
-            // todo consider creating a single method eg UpdateBankResponseDetails or using child class
             payment.AcquringBankPaymentId = bankResponse.ResponseBody.PaymentIdentifier;
             payment.StatusCode = _statusCodeConverter.ConvertToStatusCode(bankResponse.StatusCode, bankResponse.ResponseBody.PaymentErrorCode);
         }
