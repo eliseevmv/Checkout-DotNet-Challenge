@@ -18,27 +18,27 @@ namespace PaymentGateway.ComponentTests
 {
     public class ComponentTest 
     {
-        private readonly PaymentGatewayClient client;
-        private readonly Mock<IPaymentRepository> paymentRepositoryMock;
-        private readonly Mock<IBankClient> bankClientMock;
+        private PaymentGatewayClient _client;
+        private Mock<IPaymentRepository> _paymentRepositoryMock;
+        private Mock<IBankClient> _bankClientMock;
 
-        // todo ensure mocks are recreated for every test
-        public ComponentTest()
+        [SetUp]
+        public void SetUp()
         {
             var builder = new WebHostBuilder().UseStartup<TestStartup>();
             var testServer = new TestServer(builder);
-            this.client = new PaymentGatewayClient(testServer.CreateClient());
+            _client = new PaymentGatewayClient(testServer.CreateClient());
 
-            paymentRepositoryMock = GetMock<IPaymentRepository>(testServer);
-            bankClientMock = GetMock<IBankClient>(testServer);
+            _paymentRepositoryMock = GetMock<IPaymentRepository>(testServer);
+            _bankClientMock = GetMock<IBankClient>(testServer);
         }
 
         [Test]
         public async Task Given_valid_request_when_ProcessPayment_and_bank_returns_200_then_returns_200()
         {
-            paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
-            paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
-            bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
             {
                 StatusCode = HttpStatusCode.OK,
                 ResponseBody = new BankPaymentResponse
@@ -50,7 +50,7 @@ namespace PaymentGateway.ComponentTests
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
-            var response = await client.Post<ProcessPaymentRequest, ProcessPaymentResponse>("/payments", request);
+            var response = await _client.Post<ProcessPaymentRequest, ProcessPaymentResponse>("/payments", request);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(response.ResponseBody.StatusCode, Is.EqualTo(PaymentStatusCode.Success.ToString()));
@@ -60,9 +60,9 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_valid_request_when_ProcessPayment_and_repository_throws_exception_before_calling_bank_then_returns_500()
         {
-            paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Services.Entities.Payment>())).Throws(new System.Exception());
-            paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
-            bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Services.Entities.Payment>())).Throws(new System.Exception());
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
             {
                 StatusCode = HttpStatusCode.OK,
                 ResponseBody = new BankPaymentResponse
@@ -74,7 +74,7 @@ namespace PaymentGateway.ComponentTests
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
-            var response = await client.Post<ProcessPaymentRequest>("/payments", request);
+            var response = await _client.Post<ProcessPaymentRequest>("/payments", request);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
@@ -82,9 +82,9 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_valid_request_when_ProcessPayment_and_repository_throws_exception_after_calling_bank_then_returns_ok()
         {
-            paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
-            paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Services.Entities.Payment>())).Throws(new Exception());
-            bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<Services.Entities.Payment>())).Returns(Task.CompletedTask);
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<Services.Entities.Payment>())).Throws(new Exception());
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
             {
                 StatusCode = HttpStatusCode.OK,
                 ResponseBody = new BankPaymentResponse
@@ -97,7 +97,7 @@ namespace PaymentGateway.ComponentTests
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
 
-            var response = await client.Post<ProcessPaymentRequest>("/payments", request);
+            var response = await _client.Post<ProcessPaymentRequest>("/payments", request);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
@@ -108,9 +108,9 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_wrong_identifier_when_Get_then_returns_404()
         {
-            paymentRepositoryMock.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync((Services.Entities.Payment)null);
+            _paymentRepositoryMock.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync((Services.Entities.Payment)null);
 
-            var response = await client.Get<API.Models.Payment>("/payments/UNKNOWN");
+            var response = await _client.Get<API.Models.Payment>("/payments/UNKNOWN");
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
