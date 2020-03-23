@@ -313,8 +313,15 @@
 
     I did a very basic performance test - ran a process payment request from Postman against Payment Gateway deployed to Azure, in a loop (1000 times)
     According to Application Insights, average execution time was 31ms, 99th percentile was 65ms.
-    See Documentation/Application Insights-1000 requests.PNG
+    See /Documentation/Application Insights-1000 requests.PNG
     
+    7.8. Encryption
+
+    Not done
+
+    7.9. Data storage
+
+    Payment Gateway uses a SQL database deployed on Azure. The database has one table. SQL script to create the table is in /Data/dbo.Payments.sql
 
 7. Improvements
     
