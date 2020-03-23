@@ -279,19 +279,61 @@
     Payment Gateway uses Application Insights service for logging and metrics.
     The Postman collection (which runs against Azure) is in Documentation folder.
     
+7. Extra mile bonus points
+
+    7.1. Application logging 
+
+    Logging is configured and logs are available in Application Insights. However application does not log enough information yet.
+    In particular, it may need ability to log requests/responses (from/to merchant and to/from bank).
+    If logs include card details, they must be hidden/masked.
+
+    7.2. Application metrics
+
+    Application metric are available in Application Insights
+
+    7.3. Containerization
+
+    Not done
+
+    7.4. Authentication
+
+    Not done
+
+    7.5. API client
+
+    See PaymentGateway.IntegrationTests/ServiceClient folder. 
+
+    7.6. Build script / CI
+
+    Not done
+
+    7.7. 
+
+    Performance testing
+
+    I have done a very basic performance test - ran Postman Collection against Payment Gateway deployed to Azure, in a loop.
+    
+
 7. Improvements
     
+    7.1. Improvements to make this application more production-ready
+
+    These improvements include 
+
+    - Authentication
     - Configuration for multiple environments, including production
     - Improve the way how code reads configuration - including implementing options pattern
     - Logging could be improved
     - API default page
     - Swagger documentation
-    - I would like to separate core (entities and services) from infrastructure (data access and service clients). 
-      Core project should not have reference to infrastructure projects. This is similar to Hexagonal Arctitecture approach.
     - Create a database project for automatic deployment of database changes
     - CI/CD pipeline
     - A policy on GitHub repo which only allows to merge to master from a pull request, and uses squash commits by default.
       Pull request should have at least 2 code reviews
+    - GDPR
+
+    - I would like to separate core (entities and services) from infrastructure (data access and service clients). 
+      Core project should not have reference to infrastructure projects. This is similar to Hexagonal Arctitecture approach.
    
    
 
