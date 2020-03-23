@@ -273,8 +273,13 @@
     If the acquiring bank endpoint used a different technology (eg a SOAP web service), Payment Gateway would be able to support that 
     but code changes would be required.
 
+6. Hosting
 
-6. Improvements
+    I have deployed Payment Gateway, its database and Bank Simulator to Azure.
+    Payment Gateway uses Application Insights service for logging and metrics.
+    The Postman collection (which runs against Azure) is in Documentation folder.
+    
+7. Improvements
     
     - Configuration for multiple environments, including production
     - Improve the way how code reads configuration - including implementing options pattern
@@ -283,4 +288,10 @@
     - Swagger documentation
     - I would like to separate core (entities and services) from infrastructure (data access and service clients). 
       Core project should not have reference to infrastructure projects. This is similar to Hexagonal Arctitecture approach.
+    - Create a database project for automatic deployment of database changes
+    - CI/CD pipeline
+    - A policy on GitHub repo which only allows to merge to master from a pull request, and uses squash commits by default.
+      Pull request should have at least 2 code reviews
+   
+   
 
