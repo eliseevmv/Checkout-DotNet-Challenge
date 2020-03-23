@@ -51,7 +51,7 @@ namespace PaymentGateway.Services.Services
             }
             catch (Exception)
             {
-                // See comments for Scenario 7 in readme.txt
+                // See comments for Scenario 2.8 in readme.txt
             }
         }
 
