@@ -31,13 +31,13 @@ namespace PaymentGateway.Services.ServiceClients.AcquiringBankClient
             return new ResponseWithHttpStatusCode<ProcessPaymentResponse>(response, httpResponse.StatusCode);
         }
 
-        public async Task<ResponseWithHttpStatusCode<PaymentDetails>> Get(string paymentId)
+        public async Task<ResponseWithHttpStatusCode<Payment>> Get(string paymentId)
         {
             var httpResponse = await _client.GetAsync($"{_baseUrl}/payments/{paymentId}");
 
-            var response = JsonConvert.DeserializeObject<PaymentDetails>(await httpResponse.Content.ReadAsStringAsync());
+            var response = JsonConvert.DeserializeObject<Payment>(await httpResponse.Content.ReadAsStringAsync());
 
-            return new ResponseWithHttpStatusCode<PaymentDetails>(response, httpResponse.StatusCode);
+            return new ResponseWithHttpStatusCode<Payment>(response, httpResponse.StatusCode);
         }
     }
 

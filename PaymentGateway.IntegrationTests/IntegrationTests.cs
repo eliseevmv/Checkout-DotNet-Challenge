@@ -82,7 +82,7 @@ namespace PaymentGateway.IntegrationTests
             Assert.That(getResponse.Content.StatusCode, Is.EqualTo(AcquiringBankFailureCode2.ToString()));
         }
 
-        private void AssertThatPaymentDetailsAreCorrect(ProcessPaymentRequest expected, PaymentDetails actual)
+        private void AssertThatPaymentDetailsAreCorrect(ProcessPaymentRequest expected, Payment actual)
         {
             Assert.That(actual.Amount, Is.EqualTo(expected.Amount));
             Assert.That(actual.Currency, Is.EqualTo(expected.Currency));

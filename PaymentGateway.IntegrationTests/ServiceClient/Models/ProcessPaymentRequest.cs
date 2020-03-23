@@ -13,6 +13,5 @@ namespace PaymentGateway.IntegrationTests.ServiceClient.Models
         public string Cvv { get; set; }
 
         public Guid MerchantId { get; set; }
-        // todo authentication
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentGateway.IntegrationTests
+﻿namespace PaymentGateway.IntegrationTests
 {
     public static class BankSimulatorConstants
     {
