@@ -28,10 +28,6 @@ namespace PaymentGateway.Services.Services
 
         public async Task ProcessPayment(Payment paymentEntity)
         {
-            paymentEntity.PaymentId = Guid.NewGuid();
-            paymentEntity.StatusCode = PaymentStatusCode.Processing;
-            paymentEntity.MaskedCardNumber = CardDetailsUtility.MaskCardNumber(paymentEntity.CardNumber);
-
             var validationErrors = _validationService.Validate(paymentEntity);
 
             if (validationErrors.Any())
