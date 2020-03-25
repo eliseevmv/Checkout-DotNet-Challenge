@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using PaymentGateway.API.Models;
 using PaymentGateway.ComponentTests.Builders;
@@ -37,17 +36,12 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_valid_request_when_ProcessPayment_and_bank_returns_200_then_returns_200()
         {
-            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>())).Returns(Task.CompletedTask);
-            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>())).Returns(Task.CompletedTask);
-            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
-            {
-                StatusCode = HttpStatusCode.OK,
-                ResponseBody = new BankPaymentResponse
-                {
-                    PaymentIdentifier = "someIdentifier",
-                    PaymentErrorCode = null
-                }
-            }); ;
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>()))
+                                  .Returns(Task.CompletedTask);
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>()))
+                                  .Returns(Task.CompletedTask);
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>()))
+                           .ReturnsAsync(GetSuccessfulResponseFromBank());
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
@@ -61,17 +55,12 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_valid_request_when_ProcessPayment_and_repository_throws_exception_before_calling_bank_then_returns_500()
         {
-            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>())).Throws(new System.Exception());
-            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>())).Returns(Task.CompletedTask);
-            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
-            {
-                StatusCode = HttpStatusCode.OK,
-                ResponseBody = new BankPaymentResponse
-                {
-                    PaymentIdentifier = "someIdentifier",
-                    PaymentErrorCode = null
-                }
-            }); ;
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>()))
+                                  .Throws(new System.Exception());
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>()))
+                                  .Returns(Task.CompletedTask);
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>()))
+                           .ReturnsAsync(GetSuccessfulResponseFromBank());
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
@@ -83,75 +72,63 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_valid_request_when_ProcessPayment_and_repository_throws_exception_after_calling_bank_then_returns_ok()
         {
-            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>())).Returns(Task.CompletedTask);
-            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>())).Throws(new Exception());
-            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
-            {
-                StatusCode = HttpStatusCode.OK,
-                ResponseBody = new BankPaymentResponse
-                {
-                    PaymentIdentifier = "someIdentifier",
-                    PaymentErrorCode = null
-                }
-            }); ;
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>()))
+                                  .Returns(Task.CompletedTask);
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>()))
+                                  .Throws(new Exception());
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>()))
+                           .ReturnsAsync(GetSuccessfulResponseFromBank());
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
-
 
             var response = await _client.Post<ProcessPaymentRequest>("/payments", request);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
-
         [Test]
-        public async Task Given_valid_request_when_ProcessPayment_and_bank_returns_200_then_updates_database_correctly()
+        public async Task Given_valid_request_when_ProcessPayment_then_passes_correct_request_to_bank()
         {
-            const string bankPaymentId = "someIdentifier";
-            PaymentEntity savedPaymentEntity = null;
-
+            BankPaymentRequest requestSentToBank = null;
             _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>()))
                                   .Returns(Task.CompletedTask);
             _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>()))
-                                  .Callback((PaymentEntity pe) => savedPaymentEntity = pe)
                                   .Returns(Task.CompletedTask);
-            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>())).ReturnsAsync(new BankPaymentResponseWithStatus()
-            {
-                StatusCode = HttpStatusCode.OK,
-                ResponseBody = new BankPaymentResponse
-                {
-                    PaymentIdentifier = bankPaymentId,
-                    PaymentErrorCode = null
-                }
-            }); ;
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>()))
+                           .Callback((BankPaymentRequest request) => requestSentToBank = request)
+                           .ReturnsAsync(GetSuccessfulResponseFromBank());
 
             var request = PaymentRequestBuilder.BuildValidPaymentRequest();
 
             var response = await _client.Post<ProcessPaymentRequest, ProcessPaymentResponse>("/payments", request);
 
-            AssertThatPaymentEntityIsCorrect(savedPaymentEntity, request, bankPaymentId ,PaymentStatusCode.Success);
+            AssertThatBankPaymentRequetIsCorrect(requestSentToBank, request);
+
+            // Alternative solution is to use Verify command which compares properties of the bank request passed as an argument with the expected values 
+        }
+
+        [Test]
+        public async Task Given_valid_request_when_ProcessPayment_and_bank_returns_200_then_updates_database_correctly()
+        {
+            string bankPaymentId = Guid.NewGuid().ToString();
+            PaymentEntity paymentEntitySavedToDb = null;
+
+            _paymentRepositoryMock.Setup(x => x.Save(It.IsAny<PaymentEntity>()))
+                                  .Returns(Task.CompletedTask);
+            _paymentRepositoryMock.Setup(x => x.Update(It.IsAny<PaymentEntity>()))
+                                  .Callback((PaymentEntity pe) => paymentEntitySavedToDb = pe)
+                                  .Returns(Task.CompletedTask);
+            _bankClientMock.Setup(x => x.ProcessPayment(It.IsAny<BankPaymentRequest>()))
+                           .ReturnsAsync(GetSuccessfulResponseFromBank(bankPaymentId));
+
+            var request = PaymentRequestBuilder.BuildValidPaymentRequest();
+
+            var response = await _client.Post<ProcessPaymentRequest, ProcessPaymentResponse>("/payments", request);
+
+            AssertThatPaymentEntityIsCorrect(paymentEntitySavedToDb, request, bankPaymentId ,PaymentStatusCode.Success);
 
             // Alternative solution is to use Verify command which compares properties of the entity passed as an argument with the expected values 
-        }
-
-        private void AssertThatPaymentEntityIsCorrect(PaymentEntity actual,
-                                                      ProcessPaymentRequest expected,
-                                                      string expectedBankPaymentId,
-                                                      PaymentStatusCode expectedStatusCode)
-        {
-            Assert.That(actual, Is.Not.Null);
-            Assert.That(actual.PaymentId, Is.Not.EqualTo(Guid.Empty));  
-            Assert.That(actual.AcquringBankPaymentId, Is.EqualTo(expectedBankPaymentId));  
-            Assert.That(actual.StatusCode, Is.EqualTo(expectedStatusCode));  
-            Assert.That(actual.Amount, Is.EqualTo(expected.Amount));  
-            Assert.That(actual.Currency, Is.EqualTo(expected.Currency));  
-            Assert.That(actual.CardNumber, Is.EqualTo(expected.CardNumber));  
-            Assert.That(actual.MaskedCardNumber, Does.StartWith(expected.CardNumber.Substring(0,4)).And.Contains("****"));
-            Assert.That(actual.ExpiryMonthAndDate, Is.EqualTo(expected.ExpiryMonthAndDate));
-            Assert.That(actual.Cvv, Is.EqualTo(expected.Cvv));
-            Assert.That(actual.MerchantId, Is.EqualTo(expected.MerchantId));
-        }
-
+        }    
 
         // ... More tests for ProcessPayment
 
@@ -159,7 +136,8 @@ namespace PaymentGateway.ComponentTests
         [Test]
         public async Task Given_wrong_identifier_when_Get_then_returns_404()
         {
-            _paymentRepositoryMock.Setup(x => x.Get(It.IsAny<string>())).ReturnsAsync((PaymentEntity)null);
+            _paymentRepositoryMock.Setup(x => x.Get(It.IsAny<string>()))
+                                  .ReturnsAsync((PaymentEntity)null);
 
             var response = await _client.Get<API.Models.Payment>("/payments/UNKNOWN");
 
@@ -173,5 +151,45 @@ namespace PaymentGateway.ComponentTests
             return (Mock<T>)testServer.Services.GetService(typeof(Mock<T>));
         }
 
+        private static BankPaymentResponseWithStatus GetSuccessfulResponseFromBank(string bankPaymentId = "someIdentifier")
+        {
+            return new BankPaymentResponseWithStatus()
+            {
+                StatusCode = HttpStatusCode.OK,
+                ResponseBody = new BankPaymentResponse
+                {
+                    PaymentIdentifier = bankPaymentId,
+                    PaymentErrorCode = null
+                }
+            };
+        }
+
+        private void AssertThatBankPaymentRequetIsCorrect(BankPaymentRequest actual, ProcessPaymentRequest expected)
+        {
+            Assert.That(actual, Is.Not.Null);
+            Assert.That(actual.PaymentAmount, Is.EqualTo(expected.Amount));
+            Assert.That(actual.PaymentCurrency, Is.EqualTo(expected.Currency));
+            Assert.That(actual.PaymentCardNumber, Is.EqualTo(expected.CardNumber));
+            Assert.That(actual.PaymentExpiryMonthAndDate, Is.EqualTo(expected.ExpiryMonthAndDate));
+            Assert.That(actual.PaymentCvv, Is.EqualTo(expected.Cvv));
+        }
+
+        private void AssertThatPaymentEntityIsCorrect(PaymentEntity actual,
+                                                     ProcessPaymentRequest expected,
+                                                     string expectedBankPaymentId,
+                                                     PaymentStatusCode expectedStatusCode)
+        {
+            Assert.That(actual, Is.Not.Null);
+            Assert.That(actual.PaymentId, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(actual.AcquringBankPaymentId, Is.EqualTo(expectedBankPaymentId));
+            Assert.That(actual.StatusCode, Is.EqualTo(expectedStatusCode));
+            Assert.That(actual.Amount, Is.EqualTo(expected.Amount));
+            Assert.That(actual.Currency, Is.EqualTo(expected.Currency));
+            Assert.That(actual.CardNumber, Is.EqualTo(expected.CardNumber));
+            Assert.That(actual.MaskedCardNumber, Does.StartWith(expected.CardNumber.Substring(0, 4)).And.Contains("****"));
+            Assert.That(actual.ExpiryMonthAndDate, Is.EqualTo(expected.ExpiryMonthAndDate));
+            Assert.That(actual.Cvv, Is.EqualTo(expected.Cvv));
+            Assert.That(actual.MerchantId, Is.EqualTo(expected.MerchantId));
+        }
     }
 }
