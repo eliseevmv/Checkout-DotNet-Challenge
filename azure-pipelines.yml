@@ -20,7 +20,12 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: '**/PaymentGateway.ComponentTests.csproj'
+    projects: '**/*.UnitTests.csproj'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*.ComponentTests.csproj'
 
 - task: PublishBuildArtifacts@1
   inputs:
