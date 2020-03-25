@@ -16,7 +16,7 @@ using PaymentEntity = PaymentGateway.Services.Entities.Payment;
 
 namespace PaymentGateway.ComponentTests
 {
-    public class ComponentTest 
+    public class ComponentTests 
     {
         private PaymentGatewayClient _client;
         private Mock<IPaymentRepository> _paymentRepositoryMock;
