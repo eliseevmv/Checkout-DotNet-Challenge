@@ -289,7 +289,8 @@
 
     7.2. Application metrics
 
-    Application metric are available in Application Insights
+    Application metric are available in Application Insights. 
+    Example: Documentation/Application Insights-1000 requests.PNG
 
     7.3. Containerization
 
@@ -301,11 +302,23 @@
 
     7.5. API client
 
-    See PaymentGateway.IntegrationTests/ServiceClient folder. 
+    Not done. It can be created using classes from PaymentGateway.IntegrationTests/ServiceClient folder. 
 
     7.6. Build script / CI
 
-    Not done
+    Build script: azure-pipelines.yml
+    Build pipeline: https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_build?definitionId=2&_a=summary
+    
+    The build pipeline builds the solution, runs unit tests and component tests and publishes the artifact.
+    
+    Release pipeline: https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1
+    
+    The release pipeline releases Payment Gateway to Azure and runs the integration tests against the deployed application.
+    
+    If I had more time I could implemented configuration management in a better way which would support local, test, staging 
+    and production configuration. I would also change the build pipeline so it publishes an API artifact and an integration test artifact.
+    At the moment it publishes one artifact which includes both API and integration test which is not the best approach.
+    Please also note that current implementation of CI/CD represents build and deployment to a test environment. 
 
     7.7. 
 
