@@ -5,14 +5,13 @@ namespace PaymentGateway.Services.Entities
 {
     public class Payment
     {
-        private string cardNumber;
-
         public Guid PaymentId { get; set; }
         public string AcquringBankPaymentId { get; set; }
         public PaymentStatusCode StatusCode { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; }  // It should be an enum or currencyId
 
+        private string cardNumber;
         public string CardNumber 
         {
             get { return cardNumber; }
