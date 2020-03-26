@@ -124,7 +124,7 @@
             saves the response in its data store
             returns 4xx to the merchant
 
-    This scenario is implemented as an integration test.
+    This scenario is implemented as a component test and an integration test.
 
     2.4. Server error in Bank
 
@@ -142,7 +142,7 @@
             saves the response in its data store
             returns 5xx to the merchant
 
-    This scenario is implemented as an integration test.
+    This scenario is implemented as a component test and an integration test.
 
     2.5. Server error in Bank, non-JSON response
 
@@ -164,7 +164,7 @@
     2.6. Bank timeout
 
     Same as scenario above but bank does not respond
-    This scenario is  implemented as part of this exercise, but a production system should be ready for this scenario.
+    This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
     2.7. Database exception before calling bank
 
@@ -201,11 +201,9 @@
     I have made an assumption that Bank endpoint is not idempotent and it is not safe to re-send payment request to Bank.
     In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
     does not retry the same payment.
-    As a result of that, merchant will have correct response code but Payment Gateway data store will have incorrect status (because update failed)
+    As a result of that, merchant will have correct response code but Payment Gateway data store will have incorrect status (because DB update failed)
     Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue.
     It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
-
-
         
 3. Scenarios for the retrieving payment details endpoint
 
@@ -227,7 +225,7 @@
             tries to retrieves the payment details from its data store but does not find it
             returns 404 to the merchant
 
-    This scenario is implemented as an integration test.
+    This scenario is implemented as a component test and an integration test.
 
     3.3. Database exception
 
@@ -290,7 +288,7 @@
     7.2. Application metrics
 
     Application metric are available in Application Insights. 
-    Example: Documentation/Application Insights-1000 requests.PNG
+    Example: /Documentation/Application Insights-1000 requests.PNG
 
     7.3. Containerization
 
@@ -302,7 +300,7 @@
 
     7.5. API client
 
-    Not done. It can be created using classes from PaymentGateway.IntegrationTests/ServiceClient folder. 
+    Not done. It can be done using classes from PaymentGateway.IntegrationTests/ServiceClient folder. 
 
     7.6. Build script / CI
 
@@ -317,7 +315,7 @@
     
     If I had more time I could implemented configuration management in a better way which would support local, test, staging 
     and production configuration. I would also change the build pipeline so it publishes an API artifact and an integration test artifact.
-    At the moment it publishes one artifact which includes both API and integration test which is not the best approach.
+    At the moment it publishes one artifact which includes both API and tests which is not the best approach.
     Please also note that current implementation of CI/CD represents build and deployment to a test environment. 
 
     7.7. 
@@ -338,7 +336,7 @@
 
 7. Other improvements
     
-    - Configuration for multiple environments, including production
+    - Configuration for multiple environments, including local, test and production
     - Improve the way how code reads configuration - including implementing options pattern
     - Logging could be improved
     - API default page
