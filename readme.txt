@@ -300,7 +300,8 @@
 
     7.5. API client
 
-    Not done. It can be done using classes from PaymentGateway.IntegrationTests/ServiceClient folder. 
+    PaymentGateway.Client project.
+    If I had more time, I would update the build pipeline (see below) to publish client as a nuget package.
 
     7.6. Build script / CI
 
