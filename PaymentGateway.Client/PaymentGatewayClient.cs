@@ -10,12 +10,9 @@ namespace PaymentGateway.Client
         private readonly HttpClient _httpClient;
 
         // HttpClient is injected in order to encourage reusing of the same HTTP Client
-        // https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
-        // https://josef.codes/you-are-probably-still-using-httpclient-wrong-and-it-is-destabilizing-your-software/
         // https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
         // IoC registration example: 
-        // services.AddHttpClient<PaymentGatewayClient>(x => { x.BaseAddress = new Uri(myBaseUrl); });
-
+        //  services.AddHttpClient<PaymentGatewayClient>(x => { x.BaseAddress = new Uri(myBaseUrl); });
         public PaymentGatewayClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
