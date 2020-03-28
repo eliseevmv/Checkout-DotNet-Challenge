@@ -339,6 +339,8 @@
     
     - Configuration for multiple environments, including local, test and production
     - Improve the way how code reads configuration - including implementing options pattern
+    - Used Polly policies for outbound calls eg to retry in case transient errors has happened
+    - Production code should use circuit breaker when calling Acquiring Bank 
     - Logging could be improved
     - API default page
     - Swagger documentation
