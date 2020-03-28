@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PaymentGateway.IntegrationTests.ServiceClient.Models
+namespace PaymentGateway.Client.Models
 {
     public class Payment
     {
@@ -8,7 +8,6 @@ namespace PaymentGateway.IntegrationTests.ServiceClient.Models
         public string StatusCode { get; set; } 
         public decimal Amount { get; set; }
         public string Currency { get; set; }  
-
         public string MaskedCardNumber { get; set; }  
         public string ExpiryMonthAndDate { get; set; } 
         public string Cvv { get; set; }

@@ -1,9 +1,12 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using PaymentGateway.Client;
+using PaymentGateway.Client.Models;
 using PaymentGateway.IntegrationTests.Builders;
-using PaymentGateway.IntegrationTests.ServiceClient.Models;
-using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
+using PaymentGateway.IntegrationTests.Configuration;
 using static PaymentGateway.Services.Entities.PaymentStatusCode;
 
 namespace PaymentGateway.IntegrationTests
@@ -15,7 +18,9 @@ namespace PaymentGateway.IntegrationTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _client = new PaymentGatewayClient();
+            var baseUrl = new ConfigurationReader().Get("Dependencies:PaymentGateway:BaseUrl");
+            var httpClient = new HttpClient() { BaseAddress = new Uri(baseUrl) };
+            _client = new PaymentGatewayClient(httpClient);
         }
 
         [Test]

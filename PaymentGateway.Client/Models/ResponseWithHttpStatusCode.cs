@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 
-namespace PaymentGateway.IntegrationTests.ServiceClient
+namespace PaymentGateway.Client.Models
 {
     public class ResponseWithHttpStatusCode<T>
     {

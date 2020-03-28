@@ -1,4 +1,4 @@
-﻿using PaymentGateway.IntegrationTests.ServiceClient.Models;
+﻿using PaymentGateway.Client.Models;
 using System;
 
 namespace PaymentGateway.IntegrationTests.Builders

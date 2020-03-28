@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace PaymentGateway.IntegrationTests.ServiceClient.Models
+﻿namespace PaymentGateway.Client.Models
 {
     public class ProcessPaymentResponse
     {
