@@ -281,15 +281,18 @@
 
     7.1. Application logging 
 
-    Logging is configured and logs are available in Application Insights. However application does not log enough information yet.
-    In particular, it may need ability to log requests/responses (from/to merchant and to/from bank).
-    If logs include card details, they must be hidden/masked.
+    Logging is configured and logs are available in Application Insights. 
+    The application still needs an ability to log requests and responses (from/to merchant and to/from bank), however
+    it is only safe to do when card details are hidden or masked.
 
     7.2. Application metrics
 
     Application metric are available in Application Insights. 
-    Example: /Documentation/Application Insights-1000 requests.PNG
-
+    Examples: 
+    /Documentation/Application Insights - end 2 end transaction details.PNG
+    /Documentation/Application Insights - Live Metrics.PNG
+    /Documentation/Application Insights - 1000 requests.PNG
+    
     7.3. Containerization
 
     Not done
@@ -300,8 +303,8 @@
 
     7.5. API client
 
-    PaymentGateway.Client project.
-    If I had more time, I would update the build pipeline (see below) to publish client as a nuget package.
+    See PaymentGateway.Client project.
+    If I had more time, I would update the build pipeline (see below) to publish the client as a nuget package.
 
     7.6. Build script / CI
 
@@ -335,7 +338,7 @@
 
     Payment Gateway uses a SQL database deployed on Azure. The database has one table. SQL script to create the table is in /Data/dbo.Payments.sql
 
-7. Other improvements
+7. Future improvements
     
     - Configuration for multiple environments, including local, test and production
     - Improve the way how code reads configuration - including implementing options pattern
