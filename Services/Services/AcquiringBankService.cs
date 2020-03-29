@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using PaymentGateway.Services.Entities;
-using PaymentGateway.Services.ServiceClients;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient;
 using PaymentGateway.Services.ServiceClients.AcquiringBankClient.Models;
 using System.Threading.Tasks;
