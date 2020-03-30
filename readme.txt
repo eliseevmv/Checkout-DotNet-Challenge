@@ -288,8 +288,7 @@
 7. Configuration
 
     appsettings.json contains tokens (eg "#{DbConnectionString}#") which are replaced by environment-specific configuration values 
-    by the CD release pipeline in Azure DevOps (see below). Example: 
-        https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs
+    by the CD release pipeline in Azure DevOps (see below). Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs)
     Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example:
         https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev
     I have configured the DB connection string as "secret" to ensure users cannot read or copy the value.
