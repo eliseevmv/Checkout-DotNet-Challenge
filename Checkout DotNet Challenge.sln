@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\Application Insights - 1000 requests.PNG = Documentation\Application Insights - 1000 requests.PNG
 		Documentation\Application Insights - end 2 end transaction details.PNG = Documentation\Application Insights - end 2 end transaction details.PNG
 		Documentation\Application Insights - Live Metrics.PNG = Documentation\Application Insights - Live Metrics.PNG
+		Documentation\AzureDevOps - Environment-specific variable group.PNG = Documentation\AzureDevOps - Environment-specific variable group.PNG
 		Documentation\Checkout test.postman_collection.json = Documentation\Checkout test.postman_collection.json
 		readme.md = readme.md
 	EndProjectSection

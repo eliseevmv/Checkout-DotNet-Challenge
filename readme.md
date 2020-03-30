@@ -286,7 +286,7 @@ to support that but code changes would be required.
 
 I have deployed Payment Gateway, its database and Bank Simulator to Azure.
 Payment Gateway uses Application Insights service for logging and metrics.
-The Postman collection (which runs against Azure) is in Documentation folder: [Link](Documentation/Checkout test.postman_collection)
+The Postman collection (which runs against Azure) is in Documentation folder: [Link](Documentation/Checkout%20test.postman_collection.json)
 
 # 7. Configuration
 
