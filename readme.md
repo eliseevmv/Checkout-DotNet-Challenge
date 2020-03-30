@@ -2,7 +2,7 @@
     
 ## 1.1. Architecture and tech stack
     
-I've decided to implement Payment Gateway as REST API and to use JSON format. I'd also decided to implement it 
+I've decided to implement Payment Gateway as REST API and to use JSON format. I've also decided to implement it 
 using .NET Core and to host it on Azure. I assume it is acceptable.
     
 ## 1.2. Endpoints
@@ -217,41 +217,41 @@ an incorrect status because the DB update failed.
 Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue. 
 It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
         
-3. Scenarios for the retrieving payment details endpoint
+# 3. Scenarios for the retrieving payment details endpoint
 
-    3.1. Happy path
+## 3.1. Happy path
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            retrieves the payment details from its data store
-            returns 200 and the payment details to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        retrieves the payment details from its data store
+        returns 200 and the payment details to the merchant
 
-    This scenario is implemented as an integration test.
+This scenario is implemented as an integration test.
 
-    3.2. Incorrect payment id
+## 3.2. Incorrect payment id
 
-        Merchant 
-            submits a request with incorrect payment id to the payment gateway
-        Payment gateway 
-            tries to retrieves the payment details from its data store but does not find it
-            returns 404 to the merchant
+    Merchant 
+        submits a request with incorrect payment id to the payment gateway
+    Payment gateway 
+        tries to retrieves the payment details from its data store but does not find it
+        returns 404 to the merchant
 
-    This scenario is implemented as a component test and an integration test.
+This scenario is implemented as a component test and an integration test.
 
-    3.3. Database exception
+## 3.3. Database exception
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            tries to retrieves the payment details from its data store 
-            data store returns an exception
-            returns 500 to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        tries to retrieves the payment details from its data store 
+        data store returns an exception
+        returns 500 to the merchant
         
-    If the data store returns an exception, Payment Gateway should retry several times. 
-    It can help resolve errors related to intermittent connectivity issues and make this scenario less likely.
+If the data store returns an exception, Payment Gateway should retry several times. 
+It can help resolve errors related to intermittent connectivity issues and make this scenario less likely.
 
-    This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
 4. Testing
 
