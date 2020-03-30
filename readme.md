@@ -1,87 +1,87 @@
 # 1. Payment Gateway design considerations
     
-    ## 1.1. Architecture and tech stack
+## 1.1. Architecture and tech stack
     
-    I'd like to implement Payment Gateway as REST API and to use JSON format. I'd also like to implement it 
-    using .NET Core and to host it on Azure. I assume it is acceptable.
+I'd like to implement Payment Gateway as REST API and to use JSON format. I'd also like to implement it 
+using .NET Core and to host it on Azure. I assume it is acceptable.
     
-    1.2. Endpoints
+## 1.2. Endpoints
 
-    According to requirements, Payment Gateway
+According to requirements, Payment Gateway
     
-            -   should provide merchants a way to process a payment 
-            -   should also allow a merchant to retrieve details of previously made payment using its identifier. 
+        -   should provide merchants a way to process a payment 
+        -   should also allow a merchant to retrieve details of previously made payment using its identifier. 
       
-    A standard way to implement these requirements in REST API is to treat each payment as a separate resource with a unique URL. 
-    The URL should include resource type (payment) and its identifier. Example:  
+A standard way to implement these requirements in REST API is to treat each payment as a separate resource with a unique URL. 
+The URL should include resource type (payment) and its identifier. Example:  
 
-        {paymentGatewayBaseUrl}/payments/{paymentIdentifier}
+    {paymentGatewayBaseUrl}/payments/{paymentIdentifier}
     
-    When API receives GET request to resource's URL, it will return the resource representation in JSON format. 
-    Clients can create new payment resources by sending POST requests to {paymentGatewayBaseUrl}/payments.
-    Payment details are passed in POST request body.
+When API receives GET request to resource's URL, it will return the resource representation in JSON format. 
+Clients can create new payment resources by sending POST requests to {paymentGatewayBaseUrl}/payments.
+Payment details are passed in POST request body.
 
-    1.3. Data store
+## 1.3. Data store
 
-    In order to meet requirements to allow a merchant to retrieve payment details, Payment Gateway needs to store payment details 
-    in a persistent data store. Data store should support saving payment details and retrieving payment details by identifier.
-    It can be done by using a relational database or a NoSQL store. NoSQL store (in particular a document database) could be 
-    a good choice for these requirements, especially in case there is no other requirements for data joining and querying. 
-    Relational database is also a good choice. I have decided to use a relational database (SQL Server) because I have more 
-    experience with SQL Server than with NoSQL databases.
-    I have decided to use Dapper to access SQL server database because of simplicity and high performance.
+In order to meet requirements to allow a merchant to retrieve payment details, Payment Gateway needs to store payment details 
+in a persistent data store. Data store should support saving payment details and retrieving payment details by identifier.
+It can be done by using a relational database or a NoSQL store. NoSQL store (in particular a document database) could be 
+a good choice for these requirements, especially in case there is no other requirements for data joining and querying. 
+Relational database is also a good choice. I have decided to use a relational database (SQL Server) because I have more 
+experience with SQL Server than with NoSQL databases.
+I have decided to use Dapper to access SQL server database because of simplicity and high performance.
 
-    1.4. Status codes
+## 1.4. Status codes
     
-    According to the requirements, a merchant should be able to process a payment and receive either a successful or 
-    unsuccessful response. Details of a previously made payment should include a status code which indicates the result of the payment.
+According to the requirements, a merchant should be able to process a payment and receive either a successful or 
+unsuccessful response. Details of a previously made payment should include a status code which indicates the result of the payment.
     
-    REST APIs return HTTP status code to indicate if an operation was successful. For example, Payment Gateway will use 200 
-    to show that an operation was successful, 422 to indicate that validation has failed and 500 for an internal server error.
+REST APIs return HTTP status code to indicate if an operation was successful. For example, Payment Gateway will use 200 
+to show that an operation was successful, 422 to indicate that validation has failed and 500 for an internal server error.
     
-    Unfortunately, it is possible that not every payment failure scenario has a corresponding HTTP status code.
-    In case a payment has failed, Payment Gateway will assign its own status code and return it to the merchant in the response body.
-    It will also store the status code in the data store together with payment details. 
+Unfortunately, it is possible that not every payment failure scenario has a corresponding HTTP status code.
+In case a payment has failed, Payment Gateway will assign its own status code and return it to the merchant in the response body.
+It will also store the status code in the data store together with payment details. 
 
-    in case the payment failure has happened in the Acquiring Bank and it returns its own error code, it is a good idea to add this
-    information to payment details. However, the Payment Gateway will not store bank's error code directly. Instead, its own 
-    list of status codes should have values which correspond to bank error codes. Payment Gateway will map bank's error code to these 
-    status codes. This is done to protect Payment Gateway and its clients from unexpected code changes in Acquiring Bank.
+in case the payment failure has happened in the Acquiring Bank and it returns its own error code, it is a good idea to add this
+information to payment details. However, the Payment Gateway will not store bank's error code directly. Instead, its own 
+list of status codes should have values which correspond to bank error codes. Payment Gateway will map bank's error code to these 
+status codes. This is done to protect Payment Gateway and its clients from unexpected code changes in Acquiring Bank.
 
-    1.6. Encryption
+## 1.6. Encryption
 
-    Data at rest 
+### Data at rest 
 
-    According to the requirements, the response should include a masked card number and card details. 
-    Current version of Payment Gateway stores the masked card number and does not store the complete card number.
+According to the requirements, the response should include a masked card number and card details. 
+Current version of Payment Gateway stores the masked card number and does not store the complete card number.
 
-    This is not production-ready. PCI-DSS should be taken into consideration.
-    In particular, card details should be encrypted according to the appropriate security standards.
-    As an alternatiive it could be possible to use a secure 3rd party service to store the credit card details.
+This is not production-ready. PCI-DSS should be taken into consideration.
+In particular, card details should be encrypted according to the appropriate security standards.
+As an alternatiive it could be possible to use a secure 3rd party service to store the credit card details.
     
-    It is important to prevent writing credit card details to log files, including logs of requests and responses.
+It is important to prevent writing credit card details to log files, including logs of requests and responses.
 
-    Data in transit
+### Data in transit
 
-    Current versions of Payment Gateway enforces HTTPS (by using app.UseHttpsRedirection command) in order ensure that card 
-    details are not transmitted between Merchant and Payment Gateway unencrypted. It should also use HTTPS when calling 
-    Acquiring Bank.
+Current versions of Payment Gateway enforces HTTPS (by using app.UseHttpsRedirection command) in order ensure that card 
+details are not transmitted between Merchant and Payment Gateway unencrypted. It should also use HTTPS when calling 
+Acquiring Bank.
 
-    1.7. Payment identifier
+## 1.7. Payment identifier
 
-    Payment identifier generated by the Acquiring Bank is not always available. It is possible that the Acquring Bank system 
-    throws an exception and returns an error message, which does not contain payment identifier. 
-    Payment Gateway should generate its own payment identifier, return it to the merchant and use this identifier in GET payment 
-    endpoint URL. Since payment identifier is exposed to external systems, it is practical to use GUID data type. 
+Payment identifier generated by the Acquiring Bank is not always available. It is possible that the Acquring Bank system 
+throws an exception and returns an error message, which does not contain payment identifier. 
+Payment Gateway should generate its own payment identifier, return it to the merchant and use this identifier in GET payment 
+endpoint URL. Since payment identifier is exposed to external systems, it is practical to use GUID data type. 
     
-    Identifier returned by the bank can be stored as an optional property of payment resource. It can be useful for incident 
-    investigation purposes. 
+Identifier returned by the bank can be stored as an optional property of payment resource. It can be useful for incident 
+investigation purposes. 
   
-    1.8. Entities and services
+## 1.8. Entities and services
 
-    Business logic is contained in the core of the system, which consist of services and entities. 
-    API, data access code and Acquiring Bank client should not contain business logic. They are interface adapters between 
-    the core and the external systems. They convert data from the format convenient to external systems to the entities.
+Business logic is contained in the core of the system, which consist of services and entities. 
+API, data access code and Acquiring Bank client should not contain business logic. They are interface adapters between 
+the core and the external systems. They convert data from the format convenient to external systems to the entities.
 
 2. Scenarios for the payment processing endpoint
 
