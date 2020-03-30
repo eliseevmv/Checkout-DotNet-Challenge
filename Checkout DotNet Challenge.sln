@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\Application Insights - end 2 end transaction details.PNG = Documentation\Application Insights - end 2 end transaction details.PNG
 		Documentation\Application Insights - Live Metrics.PNG = Documentation\Application Insights - Live Metrics.PNG
 		Documentation\Checkout test.postman_collection.json = Documentation\Checkout test.postman_collection.json
-		readme.txt = readme.txt
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentGateway.UnitTests", "PaymentGateway.UnitTests\PaymentGateway.UnitTests.csproj", "{A4C4DDFC-D934-4D1A-AE56-D9C4EA10661B}"
@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI-CD", "CI-CD", "{D322891E
 		azure-pipelines.yml = azure-pipelines.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway.Client", "PaymentGateway.Client\PaymentGateway.Client.csproj", "{0CADAEF8-C806-4758-A96D-2FDC1B632AD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentGateway.Client", "PaymentGateway.Client\PaymentGateway.Client.csproj", "{0CADAEF8-C806-4758-A96D-2FDC1B632AD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
