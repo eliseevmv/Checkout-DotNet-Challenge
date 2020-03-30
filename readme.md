@@ -2,15 +2,15 @@
     
 ## 1.1. Architecture and tech stack
     
-I'd like to implement Payment Gateway as REST API and to use JSON format. I'd also like to implement it 
+I've decided to implement Payment Gateway as REST API and to use JSON format. I'd also decided to implement it 
 using .NET Core and to host it on Azure. I assume it is acceptable.
     
 ## 1.2. Endpoints
 
 According to requirements, Payment Gateway
     
-        -   should provide merchants a way to process a payment 
-        -   should also allow a merchant to retrieve details of previously made payment using its identifier. 
+-   should provide merchants a way to process a payment 
+-   should also allow a merchant to retrieve details of previously made payment using its identifier. 
       
 A standard way to implement these requirements in REST API is to treat each payment as a separate resource with a unique URL. 
 The URL should include resource type (payment) and its identifier. Example:  
@@ -25,11 +25,13 @@ Payment details are passed in POST request body.
 
 In order to meet requirements to allow a merchant to retrieve payment details, Payment Gateway needs to store payment details 
 in a persistent data store. Data store should support saving payment details and retrieving payment details by identifier.
+
 It can be done by using a relational database or a NoSQL store. NoSQL store (in particular a document database) could be 
 a good choice for these requirements, especially in case there is no other requirements for data joining and querying. 
-Relational database is also a good choice. I have decided to use a relational database (SQL Server) because I have more 
-experience with SQL Server than with NoSQL databases.
-I have decided to use Dapper to access SQL server database because of simplicity and high performance.
+Relational database is also a good choice. 
+
+I have decided to use a relational database (SQL Server) because I have more experience with SQL Server than with NoSQL databases.
+I have also decided to use Dapper to access SQL server database because of simplicity and high performance.
 
 ## 1.4. Status codes
     
@@ -44,7 +46,7 @@ In case a payment has failed, Payment Gateway will assign its own status code an
 It will also store the status code in the data store together with payment details. 
 
 in case the payment failure has happened in the Acquiring Bank and it returns its own error code, it is a good idea to add this
-information to payment details. However, the Payment Gateway will not store bank's error code directly. Instead, its own 
+information to the payment details. However, the Payment Gateway will not store bank's error code directly. Instead, its own 
 list of status codes should have values which correspond to bank error codes. Payment Gateway will map bank's error code to these 
 status codes. This is done to protect Payment Gateway and its clients from unexpected code changes in Acquiring Bank.
 
@@ -64,7 +66,7 @@ It is important to prevent writing credit card details to log files, including l
 ### Data in transit
 
 Current versions of Payment Gateway enforces HTTPS (by using app.UseHttpsRedirection command) in order ensure that card 
-details are not transmitted between Merchant and Payment Gateway unencrypted. It should also use HTTPS when calling 
+details are not transmitted between Merchant and Payment Gateway unencrypted. It also uses HTTPS when calling 
 Acquiring Bank.
 
 ## 1.7. Payment identifier
@@ -83,134 +85,137 @@ Business logic is contained in the core of the system, which consist of services
 API, data access code and Acquiring Bank client should not contain business logic. They are interface adapters between 
 the core and the external systems. They convert data from the format convenient to external systems to the entities.
 
-2. Scenarios for the payment processing endpoint
+# 2. Scenarios for the payment processing endpoint
 
-    2.1. Happy path
+## 2.1. Happy path
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            validates the request 
-            saves the request in its data store
-            forwards payment request to the acquiring bank
-        Acquiring bank 
-            validates the request
-            processes the payment 
-            returns 200
-        Payment gateway 
-            saves the response in its data store
-            returns 200 to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        validates the request 
+        saves the request in its data store
+        forwards payment request to the acquiring bank
+    Acquiring bank 
+        validates the request
+        processes the payment 
+        returns 200
+    Payment gateway 
+        saves the response in its data store
+        returns 200 to the merchant
 
-    This scenario is implemented as a component test and an integration test.
+This scenario is implemented as a component test and an integration test.
 
-    2.2. Validation failure in Payment Gateway
+## 2.2. Validation failure in Payment Gateway
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            validates the request, validation fails 
-            returns 4xx to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        validates the request, validation fails 
+        returns 4xx to the merchant
 
-    I have made an assumption that invalid requests should not be stored in data store.
-    This scenario is implemented as an integration test.
+I have made an assumption that invalid requests should not be stored in data store.
+This scenario is implemented as an integration test.
 
-    2.3. Validation failure in Bank
+## 2.3. Validation failure in Bank
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            validates the request 
-            saves the request in its data store
-            forwards payment request to the acquiring bank
-        Acquiring bank 
-            validates the request, validation fails
-            does not process the payment 
-            returns 4xx
-        Payment gateway 
-            saves the response in its data store
-            returns 4xx to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        validates the request 
+        saves the request in its data store
+        forwards payment request to the acquiring bank
+    Acquiring bank 
+        validates the request, validation fails
+        does not process the payment 
+        returns 4xx
+    Payment gateway 
+        saves the response in its data store
+        returns 4xx to the merchant
 
-    This scenario is implemented as a component test and an integration test.
+This scenario is implemented as a component test and an integration test.
 
-    2.4. Server error in Bank
+## 2.4. Server error in Bank
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            validates the request 
-            saves the request in its data store
-            forwards payment request to the acquiring bank
-        Acquiring bank 
-            validates the request
-            tries to process the payment but fails
-            returns 5xx
-        Payment gateway 
-            saves the response in its data store
-            returns 5xx to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        validates the request 
+        saves the request in its data store
+        forwards payment request to the acquiring bank
+    Acquiring bank 
+        validates the request
+        tries to process the payment but fails
+        returns 5xx
+    Payment gateway 
+        saves the response in its data store
+        returns 5xx to the merchant
 
-    This scenario is implemented as a component test and an integration test.
+This scenario is implemented as a component test and an integration test.
 
-    2.5. Server error in Bank, non-JSON response
+## 2.5. Server error in Bank, non-JSON response
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            validates the request 
-            saves the request in its data store
-            forwards payment request to the acquiring bank
-        Acquiring bank 
-            returns 5xx with non-JSON response
-        Payment gateway 
-            saves error details (empty payment identifier and error code) in its data store
-            returns 5xx to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        validates the request 
+        saves the request in its data store
+        forwards payment request to the acquiring bank
+    Acquiring bank 
+        returns 5xx with non-JSON response
+    Payment gateway 
+        saves error details (empty payment identifier and error code) in its data store
+        returns 5xx to the merchant
 
-    This scenario shows that payment identifier generated by the bank is not always available.
-    This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+This scenario shows that payment identifier generated by the bank is not always available.
+This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
-    2.6. Bank timeout
+## 2.6. Bank timeout
 
-    Same as scenario above but bank does not respond
-    This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
+Same as scenario above but bank does not respond
+This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
-    2.7. Database exception before calling bank
+## 2.7. Database exception before calling bank
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            tries to saves the request in its data store
-            data store returns exception
-            returns 500 to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        tries to saves the request in its data store
+        data store returns exception
+        returns 500 to the merchant
 
-    This scenario is implemented as a component test.
+This scenario is implemented as a component test.
 
-    2.8. Database exception after calling bank
+## 2.8. Database exception after calling bank
 
-        Merchant 
-            submits a request to the payment gateway
-        Payment gateway 
-            validates the request 
-            saves the request in its data store
-            forwards payment request to the acquiring bank
-        Acquiring bank 
-            validates the request
-            processes the payment 
-            returns 200
-        Payment gateway 
-            tries to saves the response in its data store
-            data store returns an exception
-            returns 200 to the merchant
+    Merchant 
+        submits a request to the payment gateway
+    Payment gateway 
+        validates the request 
+        saves the request in its data store
+        forwards payment request to the acquiring bank
+    Acquiring bank 
+        validates the request
+        processes the payment 
+        returns 200
+    Payment gateway 
+        tries to saves the response in its data store
+        data store returns an exception
+        returns 200 to the merchant
 
-    This scenario is implemented as a component test
+This scenario is implemented as a component test
 
-    It is unclear what status code should Payment Gateway return to the merchant if the Bank processed the payment but 
-    data store returned an error. It depends on whether it is safe to re-send payment request to Bank endpoint.
-    I have made an assumption that Bank endpoint is not idempotent and it is not safe to re-send payment request to Bank.
-    In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
-    does not retry the same payment.
-    As a result of that, merchant will have correct response code but Payment Gateway data store will have incorrect status 
-    (because DB update failed.) Payment Gateway should ideally notify the support team (eg by raising an alert) 
-    to ensure support team fixes the issue. It is also possible to make DB update asyncronous by using message queue. 
-    That will ensure DB will be correctly automatically updated at some point.
+It is unclear what status code should Payment Gateway return to the merchant if the Bank processed the payment but 
+the data store returned an error. It depends on whether it is safe to re-send thepayment request to the Bank endpoint.
+
+I have made an assumption that rhe Bank endpoint is not idempotent and it is not safe to re-send payment request to the Bank.
+In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
+does not retry the same payment.
+
+As a result of that, the merchant will have a correct response code. However the Payment Gateway data store will have 
+an incorrect status because the DB update failed.
+
+Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue. 
+It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
         
 3. Scenarios for the retrieving payment details endpoint
 
