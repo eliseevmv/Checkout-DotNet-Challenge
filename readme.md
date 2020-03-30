@@ -293,7 +293,7 @@ The Postman collection (which runs against Azure) is in Documentation folder: [L
 appsettings.json contains tokens (eg "#{DbConnectionString}#") which are replaced by the environment-specific configuration values 
 by the CD release pipeline in Azure DevOps (see below). Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs)
 
-Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
+Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example: [Link](Documentation/AzureDevOps%20-%20Environment-specific%20variable%20group.PNG)
 
 I have configured the DB connection string as a "secret" to ensure users cannot read or copy the value.
     
@@ -309,9 +309,12 @@ it is only safe to do when card details are hidden or masked.
 
 Application metric are available in Application Insights. 
 Examples: 
-[End to end transaction details](Documentation/Application%20Insights%20-%20end%202%20end%20transaction%20details.PNG)
-[Live metrics](Documentation/Application%20Insights%20-%20Live%20Metrics.PNG)
-[Load test - 1000 requests](Documentation/Application%20Insights%20-%201000%20requests.PNG)
+
+- [End to end transaction details](Documentation/Application%20Insights%20-%20end%202%20end%20transaction%20details.PNG)
+
+- [Live metrics](Documentation/Application%20Insights%20-%20Live%20Metrics.PNG)
+
+- [Load test - 1000 requests](Documentation/Application%20Insights%20-%201000%20requests.PNG)
     
 ## 8.3. Containerization
 
@@ -324,6 +327,7 @@ Not done
 ## 8.5. API client
 
 See [PaymentGateway.Client project](PaymentGateway.Client/).
+
 Further improvements - I would update the build pipeline (see below) to publish the client as a nuget package.
 
 ## 8.6. Build script / CI
@@ -333,10 +337,10 @@ The [build pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/
 - runs unit tests and component tests 
 - publishes the artifact.
 
-[Build script](azure-pipelines.yml)
+[Build script link](azure-pipelines.yml)
     
 The [release pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1)
-- replaces tokens in appsettings.json by values from the [environment-specific variable group](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
+- replaces tokens in appsettings.json by values from the [environment-specific variable group](Documentation/AzureDevOps%20-%20Environment-specific%20variable%20group.PNG)
 - releases Payment Gateway to Azure App Services
 - runs the integration tests against the deployed application.
 
