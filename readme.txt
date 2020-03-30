@@ -276,16 +276,25 @@
     I have deployed Payment Gateway, its database and Bank Simulator to Azure.
     Payment Gateway uses Application Insights service for logging and metrics.
     The Postman collection (which runs against Azure) is in Documentation folder.
-    
-7. Extra mile bonus points
 
-    7.1. Application logging 
+7. Configuration
+
+    appsettings.json contains tokens (eg "#{DbConnectionString}#") which are replaced by environment-specific configuration values 
+    by the CD release pipeline in Azure DevOps (see below). Example: 
+        https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs
+    Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example:
+        https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev
+    I have configured the DB connection string as "secret" to ensure users cannot read or copy the value.
+    
+8. Extra mile bonus points
+
+    8.1. Application logging 
 
     Logging is configured and logs are available in Application Insights. 
     The application still needs an ability to log requests and responses (from/to merchant and to/from bank), however
     it is only safe to do when card details are hidden or masked.
 
-    7.2. Application metrics
+    8.2. Application metrics
 
     Application metric are available in Application Insights. 
     Examples: 
@@ -293,59 +302,65 @@
     /Documentation/Application Insights - Live Metrics.PNG
     /Documentation/Application Insights - 1000 requests.PNG
     
-    7.3. Containerization
+    8.3. Containerization
 
     Not done
 
-    7.4. Authentication
+    8.4. Authentication
 
     Not done
 
-    7.5. API client
+    8.5. API client
 
     See PaymentGateway.Client project.
-    If I had more time, I would update the build pipeline (see below) to publish the client as a nuget package.
+    Further improvements - I would update the build pipeline (see below) to publish the client as a nuget package.
 
-    7.6. Build script / CI
+    8.6. Build script / CI
 
     Build script: azure-pipelines.yml
     Build pipeline: https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_build?definitionId=2&_a=summary
     
-    The build pipeline builds the solution, runs unit tests and component tests and publishes the artifact.
+    The build pipeline 
+    - builds the solution, 
+    - runs unit tests and component tests 
+    - publishes the artifact.
     
     Release pipeline: https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1
     
-    The release pipeline releases Payment Gateway to Azure and runs the integration tests against the deployed application.
+    The release pipeline 
+    - replaces tokens in appsettings.json by environment-specific values from 
+        https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev
+    - releases Payment Gateway to Azure App Services
+    - runs the integration tests against the deployed application.
+
+    Please note that current implementation of CI/CD represents build and deployment to a dev/test environment. 
     
-    If I had more time I could implemented configuration management in a better way which would support local, test, staging 
-    and production configuration. I would also change the build pipeline so it publishes an API artifact and an integration test artifact.
+    Further improvements - change the build pipeline so it publishes an API artifact and an integration test artifact separately.
     At the moment it publishes one artifact which includes both API and tests which is not the best approach.
-    Please also note that current implementation of CI/CD represents build and deployment to a test environment. 
-
-    7.7. 
-
-    Performance testing
+    
+    8.7. Performance testing
 
     I did a very basic performance test - ran a process payment request from Postman against Payment Gateway deployed to Azure, in a loop (1000 times)
     According to Application Insights, average execution time was 31ms, 99th percentile was 65ms.
     See /Documentation/Application Insights-1000 requests.PNG
+    Payment Gateway, Bank Simulator and the database were deployed on cheap "free tier" resources (F1 virtual machines, S0 10 DTU DB)
     
-    7.8. Encryption
+    8.8. Encryption
 
     Not done
 
-    7.9. Data storage
+    8.9. Data storage
 
-    Payment Gateway uses a SQL database deployed on Azure. The database has one table. SQL script to create the table is in /Data/dbo.Payments.sql
+    Payment Gateway uses a SQL database deployed on Azure. The database has one table. 
+    SQL script to create the table is in /Data/dbo.Payments.sql
 
-7. Future improvements
+9. Future improvements
     
-    - Configuration for multiple environments, including local, test and production
     - Improve the way how code reads configuration - including implementing options pattern
-    - Used Polly policies for outbound calls eg to retry in case transient errors has happened
-    - Production code should use circuit breaker when calling Acquiring Bank 
+    - Used Polly policies for outbound calls eg to retry in case transient errors have happened
+    - Production code should use a circuit breaker when calling Acquiring Bank 
     - Logging could be improved
-    - API default page
+    - API default page, which should include API version
     - Swagger documentation
     - Create a database project for automatic deployment of database changes
     - A policy on GitHub repo which only allows to merge to master from a pull request, and uses squash commits by default.
