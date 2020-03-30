@@ -82,6 +82,7 @@ investigation purposes.
 ## 1.8. Entities and services
 
 Business logic is contained in the core of the system, which consist of services and entities. 
+
 API, data access code and Acquiring Bank client should not contain business logic. They are interface adapters between 
 the core and the external systems. They convert data from the format convenient to external systems to the entities.
 
@@ -171,7 +172,8 @@ This scenario is not implemented as part of this exercise, but a production syst
 
 ## 2.6. Bank timeout
 
-Same as scenario above but bank does not respond
+Same as scenario above but bank does not respond at all.
+
 This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
 ## 2.7. Database exception before calling bank
@@ -202,10 +204,10 @@ This scenario is implemented as a component test.
         data store returns an exception
         returns 200 to the merchant
 
-This scenario is implemented as a component test
+This scenario is implemented as a component test.
 
 It is unclear what status code should Payment Gateway return to the merchant if the Bank processed the payment but 
-the data store returned an error. It depends on whether it is safe to re-send thepayment request to the Bank endpoint.
+the data store returned an error. It depends on whether it is safe to re-send the payment request to the Bank endpoint.
 
 I have made an assumption that rhe Bank endpoint is not idempotent and it is not safe to re-send payment request to the Bank.
 In this case Payment Gateway should catch the exception from DB and return 200 to the merchant to ensure the merchant 
@@ -214,8 +216,11 @@ does not retry the same payment.
 As a result of that, the merchant will have a correct response code. However the Payment Gateway data store will have 
 an incorrect status because the DB update failed.
 
-Payment Gateway should ideally notify the support team (eg by raising an alert) to ensure support team fixes the issue. 
-It is also possible to make DB update asyncronous by using message queue. That will ensure DB will be correctly automatically updated at some point.
+It is a good idea to wrap DB calls in a Polly policy in order to re-try calls affected by intermittent database connectivity issues.
+If the database call fails even after retries, Payment Gateway should ideally notify the support team (eg by raising an alert) 
+to ensure support team fixes the issue. 
+
+It is also possible to make DB update asyncronous by using a message queue. That will ensure DB will be correctly automatically updated at some point.
         
 # 3. Scenarios for the retrieving payment details endpoint
 
