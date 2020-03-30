@@ -292,7 +292,9 @@ The Postman collection (which runs against Azure) is in Documentation folder: [L
 
 appsettings.json contains tokens (eg "#{DbConnectionString}#") which are replaced by the environment-specific configuration values 
 by the CD release pipeline in Azure DevOps (see below). Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs)
+
 Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
+
 I have configured the DB connection string as a "secret" to ensure users cannot read or copy the value.
     
 # 8. Extra mile bonus points
@@ -307,9 +309,9 @@ it is only safe to do when card details are hidden or masked.
 
 Application metric are available in Application Insights. 
 Examples: 
-[End to end transaction details](Documentation/Application Insights - end 2 end transaction details.PNG)
-[Live metrics] (Documentation/Application Insights - Live Metrics.PNG)
-[Load test - 1000 requests](Documentation/Application Insights - 1000 requests.PNG)
+[End to end transaction details](Documentation/Application%20Insights%20-%20end%202%20end%20transaction%20details.PNG)
+[Live metrics](Documentation/Application%20Insights%20-%20Live%20Metrics.PNG)
+[Load test - 1000 requests](Documentation/Application%20Insights%20-%201000%20requests.PNG)
     
 ## 8.3. Containerization
 
@@ -325,23 +327,20 @@ See [PaymentGateway.Client project](PaymentGateway.Client/).
 Further improvements - I would update the build pipeline (see below) to publish the client as a nuget package.
 
 ## 8.6. Build script / CI
-
-[Build script](azure-pipelines.yml)
-[Build pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_build?definitionId=2&_a=summary)
     
-The build pipeline 
+The [build pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_build?definitionId=2&_a=summary) 
 - builds the solution, 
 - runs unit tests and component tests 
 - publishes the artifact.
+
+[Build script](azure-pipelines.yml)
     
-[Release pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1)
-    
-The release pipeline 
-- replaces tokens in appsettings.json by values from environment-specific variable group: [link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
+The [release pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1)
+- replaces tokens in appsettings.json by values from the [environment-specific variable group](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
 - releases Payment Gateway to Azure App Services
 - runs the integration tests against the deployed application.
 
-Please note that current implementation of CI/CD represents build and deployment to a dev/test environment. 
+Please note that the current implementation of CI/CD represents build and deployment to a dev/test environment. 
     
 Further improvements - change the build pipeline so it publishes an API artifact and an integration test artifact separately.
 At the moment it publishes one artifact which includes both API and tests which is not the best approach.
@@ -350,7 +349,7 @@ At the moment it publishes one artifact which includes both API and tests which 
 
 I did a very basic performance test - ran a process payment request from Postman against Payment Gateway deployed to Azure, 
 in a loop (1000 times). According to Application Insights, average execution time was 31ms, 99th percentile was 65ms.
-See [Application Insights screenshot](Documentation/Application Insights-1000 requests.PNG)
+See [Application Insights screenshot](Documentation/Application%20Insights%20-%201000%20requests.PNG)
 
 Note that Payment Gateway, Bank Simulator and the database were deployed on cheap "free tier" resources (F1 virtual machines, S0 10 DTU DB)
     
@@ -361,7 +360,7 @@ Not done
 ## 8.9. Data storage
 
 Payment Gateway uses a SQL database deployed on Azure. The database has one table. 
-SQL script to create the table is in (Data/dbo.Payments.sql)
+[SQL script to create the table](Data/dbo.Payments.sql)
 
 ## 9. Future improvements
     
