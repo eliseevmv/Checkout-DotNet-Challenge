@@ -1,6 +1,6 @@
-1. Payment Gateway design considerations
+# 1. Payment Gateway design considerations
     
-    1.1. Architecture and tech stack
+    ## 1.1. Architecture and tech stack
     
     I'd like to implement Payment Gateway as REST API and to use JSON format. I'd also like to implement it 
     using .NET Core and to host it on Azure. I assume it is acceptable.
