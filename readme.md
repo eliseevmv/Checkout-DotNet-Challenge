@@ -30,7 +30,7 @@ It can be done by using a relational database or a NoSQL store. NoSQL store (in 
 a good choice for these requirements, especially in case there is no other requirements for data joining and querying. 
 Relational database is also a good choice. 
 
-I have decided to use a relational database (SQL Server) because I have more experience with SQL Server than with NoSQL databases.
+I have decided to use a relational database (SQL Server) because I have more experience with SQL Server than with NoSQL data stores.
 I have also decided to use Dapper to access SQL server database because of simplicity and high performance.
 
 ## 1.4. Status codes
@@ -46,7 +46,7 @@ In case a payment has failed, Payment Gateway will assign its own status code an
 It will also store the status code in the data store together with payment details. 
 
 in case the payment failure has happened in the Acquiring Bank and it returns its own error code, it is a good idea to add this
-information to the payment details. However, the Payment Gateway will not store bank's error code directly. Instead, its own 
+information to the payment details. However, the Payment Gateway will not use bank's error code directly. Instead, its own 
 list of status codes should have values which correspond to bank error codes. Payment Gateway will map bank's error code to these 
 status codes. This is done to protect Payment Gateway and its clients from unexpected code changes in Acquiring Bank.
 
@@ -59,13 +59,13 @@ Current version of Payment Gateway stores the masked card number and does not st
 
 This is not production-ready. PCI-DSS should be taken into consideration.
 In particular, card details should be encrypted according to the appropriate security standards.
-As an alternatiive it could be possible to use a secure 3rd party service to store the credit card details.
+As an alternative it could be possible to use a secure 3rd party service to store the credit card details.
     
 It is important to prevent writing credit card details to log files, including logs of requests and responses.
 
 ### Data in transit
 
-Current versions of Payment Gateway enforces HTTPS (by using app.UseHttpsRedirection command) in order ensure that card 
+Current version of Payment Gateway enforces HTTPS (by using app.UseHttpsRedirection command) in order ensure that card 
 details are not transmitted between Merchant and Payment Gateway unencrypted. It also uses HTTPS when calling 
 Acquiring Bank.
 
