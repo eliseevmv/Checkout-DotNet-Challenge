@@ -253,134 +253,130 @@ It can help resolve errors related to intermittent connectivity issues and make 
 
 This scenario is not implemented as part of this exercise, but a production system should be ready for this scenario.
 
-4. Testing
+# 4. Testing
 
-    Ideally Payment Gateway should have a set of tests which follows the idea of the test pyramid.
+Ideally Payment Gateway should have a set of tests which follows the idea of the test pyramid.
     
-    Most classes should have a separate set of unit tests which test each class in isolation of any dependencies.
-    Dependencies must be replaced by test doubles, eg mocks. Unit tests should do detailed low-level testing of classes.
+Most classes should have a separate set of unit tests which test each class in isolation of any dependencies.
+Dependencies must be replaced by test doubles, eg mocks. Unit tests should do detailed low-level testing of classes.
 
-    Payment Gateway should also have a set of component tests, which run PaymentGateway inside an in-memory test web server and 
-    replace external dependencies (eg database and Bank) by mocks. These tests allow to tests Payment Gateway as a whole.
-    They allow to simulate correct and incorrect responses from external systems and test how Payment Gateway processes these
-    responses. There should be fewer component tests that unit tests.
+Payment Gateway should also have a set of component tests, which run PaymentGateway inside an in-memory test web server and 
+replace external dependencies (eg database and Bank) by mocks. These tests allow to tests Payment Gateway as a whole.
+They allow to simulate correct and incorrect responses from external systems and test how Payment Gateway processes these
+responses. There should be fewer component tests that unit tests.
     
-    Payment Gateway should have a set of integration tests, which run against Payment Gateway deployed on a test environment,
-    with real dependencies, including real database and Bank Simulator. Ideally number of these tests should be lower than
-    number of component tests, because these tests are slower and could be more brittle.
+Payment Gateway should have a set of integration tests, which run against Payment Gateway deployed on a test environment,
+with real dependencies, including real database and Bank Simulator. Ideally number of these tests should be lower than
+number of component tests, because these tests are slower and could be more brittle.
 
-5. Bank Simulator
+# 5. Bank Simulator
 
-    5.1 Assumptions
+Assumptions : acquiring bank exposes an REST API which 
+- uses JSON format
+- returns 200 and payment identifier for successful requests, 
+- returns 4xx, payment identifier and error code for requests which failed validation
+- returns 5xx, payment identifier and error code when payment is not possible because of technical issues 
+    (eg one of dependencies is down)
+- returns 5xx and non-JSON response when it experiences serious issues (eg whole system is down and proxy returned 503/504) 
 
-    Acquiring bank exposes an REST API which 
-        - uses JSON format
-        - returns 200 and payment identifier for successful requests, 
-        - returns 4xx, payment identifier and error code for requests which failed validation
-        - returns 5xx, payment identifier and error code when payment is not possible because of technical issues 
-          (eg one of dependencies is down)
-        - returns 5xx and non-JSON response when it experiences serious issues (eg whole system is down and proxy returned 503/504) 
+If the acquiring bank endpoint used a different technology (eg a SOAP web service), Payment Gateway would be able 
+to support that but code changes would be required.
 
-    If the acquiring bank endpoint used a different technology (eg a SOAP web service), Payment Gateway would be able 
-    to support that but code changes would be required.
+# 6. Hosting
 
-6. Hosting
+I have deployed Payment Gateway, its database and Bank Simulator to Azure.
+Payment Gateway uses Application Insights service for logging and metrics.
+The Postman collection (which runs against Azure) is in Documentation folder: [Link](Documentation/Checkout test.postman_collection)
 
-    I have deployed Payment Gateway, its database and Bank Simulator to Azure.
-    Payment Gateway uses Application Insights service for logging and metrics.
-    The Postman collection (which runs against Azure) is in Documentation folder.
+# 7. Configuration
 
-7. Configuration
-
-    appsettings.json contains tokens (eg "#{DbConnectionString}#") which are replaced by environment-specific configuration values 
-    by the CD release pipeline in Azure DevOps (see below). Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs)
-    Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example:
-        https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev
-    I have configured the DB connection string as "secret" to ensure users cannot read or copy the value.
+appsettings.json contains tokens (eg "#{DbConnectionString}#") which are replaced by the environment-specific configuration values 
+by the CD release pipeline in Azure DevOps (see below). Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_releaseProgress?releaseId=12&environmentId=12&itemType=VariableGroups&_a=release-environment-logs)
+Release pipeline gets environment-specific configuration values from an environment-specific variable group in Azure DevOps. Example: [Link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
+I have configured the DB connection string as a "secret" to ensure users cannot read or copy the value.
     
-8. Extra mile bonus points
+# 8. Extra mile bonus points
 
-    8.1. Application logging 
+## 8.1. Application logging 
 
-    Logging is configured and logs are available in Application Insights. 
-    The application still needs an ability to log requests and responses (from/to merchant and to/from bank), however
-    it is only safe to do when card details are hidden or masked.
+Logging is configured and logs are available in Application Insights. 
+The application still needs an ability to log requests and responses (from/to merchant and to/from bank), however
+it is only safe to do when card details are hidden or masked.
 
-    8.2. Application metrics
+## 8.2. Application metrics
 
-    Application metric are available in Application Insights. 
-    Examples: 
-    /Documentation/Application Insights - end 2 end transaction details.PNG
-    /Documentation/Application Insights - Live Metrics.PNG
-    /Documentation/Application Insights - 1000 requests.PNG
+Application metric are available in Application Insights. 
+Examples: 
+[End to end transaction details](Documentation/Application Insights - end 2 end transaction details.PNG)
+[Live metrics] (Documentation/Application Insights - Live Metrics.PNG)
+[Load test - 1000 requests](Documentation/Application Insights - 1000 requests.PNG)
     
-    8.3. Containerization
+## 8.3. Containerization
 
-    Not done
+Not done
 
-    8.4. Authentication
+## 8.4. Authentication
 
-    Not done
+Not done
 
-    8.5. API client
+## 8.5. API client
 
-    See PaymentGateway.Client project.
-    Further improvements - I would update the build pipeline (see below) to publish the client as a nuget package.
+See [PaymentGateway.Client project](PaymentGateway.Client/).
+Further improvements - I would update the build pipeline (see below) to publish the client as a nuget package.
 
-    8.6. Build script / CI
+## 8.6. Build script / CI
 
-    Build script: azure-pipelines.yml
-    Build pipeline: https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_build?definitionId=2&_a=summary
+[Build script](azure-pipelines.yml)
+[Build pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_build?definitionId=2&_a=summary)
     
-    The build pipeline 
-    - builds the solution, 
-    - runs unit tests and component tests 
-    - publishes the artifact.
+The build pipeline 
+- builds the solution, 
+- runs unit tests and component tests 
+- publishes the artifact.
     
-    Release pipeline: https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1
+[Release pipeline](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_release?_a=releases&view=mine&definitionId=1)
     
-    The release pipeline 
-    - replaces tokens in appsettings.json by environment-specific values from 
-        https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev
-    - releases Payment Gateway to Azure App Services
-    - runs the integration tests against the deployed application.
+The release pipeline 
+- replaces tokens in appsettings.json by values from environment-specific variable group: [link](https://dev.azure.com/maximeliseev/Checkout-PaymentGateway/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=1&path=Dev)
+- releases Payment Gateway to Azure App Services
+- runs the integration tests against the deployed application.
 
-    Please note that current implementation of CI/CD represents build and deployment to a dev/test environment. 
+Please note that current implementation of CI/CD represents build and deployment to a dev/test environment. 
     
-    Further improvements - change the build pipeline so it publishes an API artifact and an integration test artifact separately.
-    At the moment it publishes one artifact which includes both API and tests which is not the best approach.
+Further improvements - change the build pipeline so it publishes an API artifact and an integration test artifact separately.
+At the moment it publishes one artifact which includes both API and tests which is not the best approach.
     
-    8.7. Performance testing
+## 8.7. Performance testing
 
-    I did a very basic performance test - ran a process payment request from Postman against Payment Gateway deployed to Azure, 
-    in a loop (1000 times). According to Application Insights, average execution time was 31ms, 99th percentile was 65ms.
-    See /Documentation/Application Insights-1000 requests.PNG
-    Payment Gateway, Bank Simulator and the database were deployed on cheap "free tier" resources 
-    (F1 virtual machines, S0 10 DTU DB)
+I did a very basic performance test - ran a process payment request from Postman against Payment Gateway deployed to Azure, 
+in a loop (1000 times). According to Application Insights, average execution time was 31ms, 99th percentile was 65ms.
+See [Application Insights screenshot](Documentation/Application Insights-1000 requests.PNG)
+
+Note that Payment Gateway, Bank Simulator and the database were deployed on cheap "free tier" resources (F1 virtual machines, S0 10 DTU DB)
     
-    8.8. Encryption
+## 8.8. Encryption
 
-    Not done
+Not done
 
-    8.9. Data storage
+## 8.9. Data storage
 
-    Payment Gateway uses a SQL database deployed on Azure. The database has one table. 
-    SQL script to create the table is in /Data/dbo.Payments.sql
+Payment Gateway uses a SQL database deployed on Azure. The database has one table. 
+SQL script to create the table is in (Data/dbo.Payments.sql)
 
-9. Future improvements
+## 9. Future improvements
     
-    - Improve the way how code reads configuration - including implementing options pattern
-    - Used Polly policies for outbound calls eg to retry in case transient errors have happened
-    - Production code should use a circuit breaker when calling Acquiring Bank 
-    - Logging could be improved
-    - API default page, which should include API version
-    - Swagger documentation
-    - Create a database project for automatic deployment of database changes
-    - A policy on GitHub repo which only allows to merge to master from a pull request, and uses squash commits by default.
-      Pull request should have at least 2 code reviews
-    - GDPR
-    - I would like to separate core (entities and services) from infrastructure (data access and service clients). 
-      Core project should not have reference to infrastructure projects. This is similar to Hexagonal Arctitecture approach.
+- Improve the way how code reads configuration - including implementing options pattern
+- Used Polly policies for outbound calls eg to retry in case transient errors have happened
+- Production code should use a circuit breaker when calling Acquiring Bank 
+- Logging could be improved
+- API default page, which should include API version
+- Swagger documentation
+- Create a database project for automatic deployment of database changes
+- A policy on GitHub repo which only allows to merge to master from a pull request, and uses squash commits by default.
+    Pull request should have at least 2 code reviews
+- GDPR
+- I would like to separate core (entities and services) from infrastructure (data access and service clients). 
+    Core project should not have reference to infrastructure projects. This is similar to Hexagonal Arctitecture approach.
    
    
 
